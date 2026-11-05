@@ -1,0 +1,31 @@
+@use 'sass:map';
+
+// ============ 通用 mixin（所有 scss 自动可用） ============
+
+/// 过渡动画
+@mixin transition($props: all, $duration: 0.25s, $ease: ease) {
+  transition: $props $duration $ease;
+}
+
+/// 弹性居中
+@mixin flex-center($direction: row) {
+  display: flex;
+  flex-direction: $direction;
+  align-items: center;
+  justify-content: center;
+}
+
+/// 单行省略
+@mixin ellipsis {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/// 多行省略
+@mixin ellipsis-lines($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}

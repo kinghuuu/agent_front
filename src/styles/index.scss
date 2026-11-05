@@ -1,0 +1,36 @@
+// ============ 全局样式 ============
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  color: $text-primary;
+  background-color: $bg-color;
+}
+
+a {
+  color: $primary-color;
+  text-decoration: none;
+}
+
+// 通用页面容器
+.page-container {
+  padding: $gap-md;
+}
+
+// 卡片标题
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 600;
+}
