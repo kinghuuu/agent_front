@@ -23,3 +23,15 @@ $gap-lg: 24px;
 // 圆角
 $radius-sm: 4px;
 $radius-md: 8px;
+
+// 智能体对话页（参考主流大模型页面：淡紫渐变主色 + 浅灰对话面板）
+$agent-gradient: linear-gradient(135deg, #6b7cff 0%, #a06bff 100%);
+$agent-accent: #6b7cff;
+$agent-border: #eceef4;
+$agent-panel-bg: #f7f8fc;
+$agent-user-bubble: #eaf1ff;
+$agent-assistant-bubble: #f4f6fb;
+$agent-text-muted: #8a91a8;
+
+// 会话页内容区宽度：消息列表、欢迎页、输入框共用，保证左右边界齐平
+$agent-content-width: 820px;

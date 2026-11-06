@@ -6,7 +6,7 @@
 
 从零学习 Agent 开发的前端工程，与后端 `agent_backend` 配套。当前定位：**通用管理台骨架 + 按模块逐步扩展**（概览、模型管理 → 会话 → 知识库 …）。
 
-- 技术栈：Vue 3（`<script setup>`）+ Vite 5 + Element Plus + Sass + Pinia + Vue Router + Axios
+- 技术栈：Vue 3（`<script setup>`）+ Vite 5 + Element Plus + Sass + Pinia + Vue Router + Axios + markdown-it（Markdown 渲染）
 - 开发地址：<http://localhost:15173>（`npm run dev` 自动打开浏览器）
 - 后端地址：<http://127.0.0.1:15401>，开发期由 Vite 代理 `/api` 转发
 
@@ -15,6 +15,7 @@
 | 路由         | 页面     | 说明                                                              |
 | ------------ | -------- | ----------------------------------------------------------------- |
 | `/dashboard` | 概览     | 展示后端健康状态、PG/Redis 连通性                                 |
+| `/agent`     | 智能体   | 大模型对话页（参考豆包 / 千问）：左侧会话列表 + 右侧对话区，SSE 流式输出、模型切换、重命名 / 删除 / 清空会话 |
 | `/models`    | 模型管理 | LLM / Embedding / Rerank 配置列表与增删改查、连通测试、上下文测试 |
 | `/about`     | 关于     | 项目技术栈说明                                                    |
 
@@ -48,7 +49,7 @@ agent_front/src/
 
 - `@` 别名指向 `src`；禁止跨页面直接 import 另一个 `views/` 里的组件，公共组件放 `src/components/`
 - 新增页面 = 在 `views/<模块>/index.vue` 建页面 + `api/<模块>.js` 建接口 + 路由表加一条（菜单会自动出现）
-- 路由 `meta` 字段：`title`（菜单/面包屑文案）、`icon`（Element Plus 图标名，必须真实存在）、`hidden`（不在菜单显示）
+- 路由 `meta` 字段：`title`（菜单/面包屑文案）、`icon`（Element Plus 图标名，必须真实存在）、`hidden`（不在菜单显示）、`fullscreen`（为 true 时 BasicLayout 的内容区去掉内边距，页面自行撑满，用于对话页这类全屏场景）
 - 全局状态只放"跨页面共享的 UI 状态"，业务数据由页面自行请求，不塞进 store
 
 ## 4. 编码规范
@@ -99,3 +100,15 @@ agent_front/src/
 | 2026-11-02 | 修复 | 图标解析   | `src/layouts/BasicLayout.vue`                                           | 图标包中不存在 `Robot`，改用 `MagicStick` 并显式引入                              |
 | 2026-11-05 | 新增 | 模型管理   | `src/views/models/index.vue`, `src/api/model.js`, `src/router/index.js` | 三类模型 Tab + 表格与操作（编辑/连通测试/上下文测试/启用禁用/删除）+ 新增编辑弹窗 |
 | 2026-11-05 | 规范 | 工程规范   | `AGENTS.md`, `CLAUDE.md`                                                | 建立目录约定、编码规范、新增页面流程与变更追踪机制；补齐全仓注释                  |
+| 2026-11-06 | 新增 | 智能体     | `src/views/agent/**`, `src/api/agent.js`, `src/router/index.js`         | 大模型对话页：左侧会话列表 + 右侧对话区（欢迎页 / 消息气泡 / 输入框三个子组件），SSE 流式输出（`fetch` + ReadableStream 解析，axios 不支持流式）、停止生成、复制、模型切换、重命名 / 删除 / 清空会话 |
+| 2026-11-06 | 修改 | 布局与样式 | `src/layouts/BasicLayout.vue`, `src/router/index.js`, `src/styles/variables.scss` | 路由 `meta.fullscreen` 支持全屏页面（内容区去内边距）；新增智能体主题变量（`$agent-*` 渐变主色 / 气泡底色等） |
+| 2026-11-06 | 修改 | 智能体交互 | `src/views/agent/index.vue`, `src/views/agent/components/ChatComposer.vue`, `src/views/agent/components/SessionSidebar.vue`, `src/api/agent.js` | 模型选择移入输入框（composer 底部工具区，预留知识库等后续选择器位置）；移除顶栏「清空对话」入口与对应接口封装；会话列表去掉装饰图标，标题占满 |
+| 2026-11-06 | 修改 | 智能体样式 | `src/views/agent/index.vue` | 顶栏「生成中」从 el-tag 改为转圈加载胶囊（`.generating` 自定义 ring 动画） |
+| 2026-11-06 | 修改 | 智能体样式 | `src/views/agent/index.vue` | 生成中指示器简化为纯转圈（去掉底色胶囊与文字，仅 14px ring 动画） |
+| 2026-11-06 | 修改 | 智能体样式 | `src/views/agent/components/ChatComposer.vue`, `src/views/agent/index.vue` | 发送/停止改为纯图标圆按钮（渐变紫 / 淡紫底，tooltip 提示）；模型选择改为无边框小胶囊；转圈指示器换成 conic-gradient + mask 的渐变彗尾样式 |
+| 2026-11-06 | 修改 | 智能体样式 | `src/views/agent/components/MessageItem.vue`, `src/styles/variables.scss` | 消息气泡去掉左右头像（气泡占满行宽 80%），用户消息的操作行跟随右对齐；删除不再使用的 `$agent-user-avatar-bg` 变量 |
+| 2026-11-06 | 新增 | 公共组件 | `src/components/MarkdownContent.vue`, `src/views/agent/components/MessageItem.vue`, `package.json` | 新增通用 Markdown 渲染组件（markdown-it@14：html 转义防 XSS、表格/列表/引用/链接新窗口，代码块带语言标签与复制按钮），替换 MessageItem 里手写的围栏解析；后续会话类页面直接复用该组件 |
+| 2026-11-06 | 修改 | 智能体样式 | `src/views/agent/index.vue` | 欢迎页去掉图标方块；标题改为流动渐变文字（background-clip: text + 9s 慢速循环，`prefers-reduced-motion` 时停用） |
+| 2026-11-06 | 修改 | 智能体样式 | `src/views/agent/index.vue`, `src/styles/variables.scss` | 内容区宽度统一为 `$agent-content-width`（820px）：消息列表 / 欢迎页 / 输入框左右边界对齐（水平内边距统一移到滚动容器 `.message-area`） |
+| 2026-11-06 | 修复 | 智能体样式 | `src/views/agent/index.vue` | 经典滚动条只占右侧宽度，导致滚动容器内内容居中轴左移半个滚动条宽（与输入框错位）；`.message-area` 加 `scrollbar-gutter: stable both-edges` 对称预留滚动条槽修复 |
+| 2026-11-06 | 新增 | 公共图标 | `src/components/icons/AgentIcon.vue`, `src/layouts/BasicLayout.vue` | 新增机器人 SVG 图标组件（描边 currentColor + 渐变点缀，尺寸随 font-size），替换布局 logo 的 MagicStick；公共图标放 `components/icons/` |

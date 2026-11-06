@@ -4,7 +4,7 @@
       <!-- 侧边栏 -->
       <el-aside class="layout-aside" :width="collapsed ? '64px' : '210px'">
         <div class="logo">
-          <el-icon :size="22"><MagicStick /></el-icon>
+          <AgentIcon class="logo-icon" />
           <span v-show="!collapsed" class="logo-text">Agent 平台</span>
         </div>
         <el-menu
@@ -38,8 +38,8 @@
           </div>
         </el-header>
 
-        <!-- 内容区 -->
-        <el-main class="layout-main">
+        <!-- 内容区：meta.fullscreen 的页面（如智能体对话页）去掉内边距，自行撑满 -->
+        <el-main :class="['layout-main', { 'layout-main--full': route.meta.fullscreen }]">
           <router-view v-slot="{ Component }">
             <transition name="fade-slide" mode="out-in">
               <component :is="Component" />
@@ -58,8 +58,8 @@
 // 3) 顶栏右侧展示后端健康状态，进入页面时探测一次
 import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { MagicStick } from '@element-plus/icons-vue'
 import { storeToRefs } from 'pinia'
+import AgentIcon from '@/components/icons/AgentIcon.vue'
 import { useAppStore } from '@/store/modules/app'
 import { getHealth } from '@/api/system'
 
@@ -111,6 +111,10 @@ onMounted(async () => {
     gap: 8px;
     color: #fff;
 
+    .logo-icon {
+      font-size: 24px;
+    }
+
     .logo-text {
       font-size: 16px;
       font-weight: 600;
@@ -147,6 +151,11 @@ onMounted(async () => {
 
 .layout-main {
   background-color: $bg-color;
+
+  &--full {
+    padding: 0;
+    overflow: hidden;
+  }
 }
 
 .fade-slide-enter-active,
