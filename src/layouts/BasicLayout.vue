@@ -98,8 +98,10 @@ onMounted(async () => {
   height: 100%;
 }
 
+// 浅色侧边栏：与内容区同色系，仅靠右侧描边分隔
 .layout-aside {
-  background-color: $menu-bg;
+  background-color: $sidebar-bg;
+  border-right: 1px solid $border-color;
   overflow: hidden;
   @include transition(all);
 
@@ -109,7 +111,7 @@ onMounted(async () => {
     align-items: center;
     justify-content: center;
     gap: 8px;
-    color: #fff;
+    color: $text-primary;
 
     .logo-icon {
       font-size: 24px;
@@ -124,10 +126,17 @@ onMounted(async () => {
 
   .layout-menu {
     border-right: none;
-    --el-menu-bg-color: #{$menu-bg};
-    --el-menu-text-color: #bfcbd9;
+    background: transparent;
+    --el-menu-bg-color: transparent;
+    --el-menu-text-color: #{$text-regular};
     --el-menu-active-color: #{$primary-color};
-    --el-menu-hover-bg-color: #263445;
+    --el-menu-hover-bg-color: #{$sidebar-hover-bg};
+
+    // 当前页菜单项加淡色底，浅色背景下光靠文字变色不够明显
+    :deep(.el-menu-item.is-active) {
+      background: $sidebar-hover-bg;
+      font-weight: 600;
+    }
   }
 }
 

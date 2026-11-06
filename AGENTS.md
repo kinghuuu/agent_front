@@ -111,4 +111,5 @@ agent_front/src/
 | 2026-11-06 | 修改 | 智能体样式 | `src/views/agent/index.vue` | 欢迎页去掉图标方块；标题改为流动渐变文字（background-clip: text + 9s 慢速循环，`prefers-reduced-motion` 时停用） |
 | 2026-11-06 | 修改 | 智能体样式 | `src/views/agent/index.vue`, `src/styles/variables.scss` | 内容区宽度统一为 `$agent-content-width`（820px）：消息列表 / 欢迎页 / 输入框左右边界对齐（水平内边距统一移到滚动容器 `.message-area`） |
 | 2026-11-06 | 修复 | 智能体样式 | `src/views/agent/index.vue` | 经典滚动条只占右侧宽度，导致滚动容器内内容居中轴左移半个滚动条宽（与输入框错位）；`.message-area` 加 `scrollbar-gutter: stable both-edges` 对称预留滚动条槽修复 |
+| 2026-11-06 | 修改 | 布局与样式 | `src/layouts/BasicLayout.vue`, `src/styles/variables.scss` | 侧边栏改浅色主题（`$sidebar-bg` / `$sidebar-hover-bg` 替代深色 `$menu-bg`）：白系底 + 右描边，菜单文字深灰、hover 淡灰、当前项淡底加粗；logo 文字改深色（机器人图标 currentColor 自动适配） |
 | 2026-11-06 | 新增 | 公共图标 | `src/components/icons/AgentIcon.vue`, `src/layouts/BasicLayout.vue` | 新增机器人 SVG 图标组件（描边 currentColor + 渐变点缀，尺寸随 font-size），替换布局 logo 的 MagicStick；公共图标放 `components/icons/` |
