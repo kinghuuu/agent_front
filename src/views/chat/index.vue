@@ -38,7 +38,7 @@
       <div ref="messageAreaRef" class="message-area">
         <!-- 空会话：欢迎页 + 示例问题 -->
         <div v-if="!messages.length" class="welcome">
-          <h1 class="welcome-title">你好，我是你的智能体</h1>
+          <h1 class="welcome-title">你好，我是你的会话</h1>
           <p class="welcome-sub">
             支持多轮对话与流式输出，由「模型管理」中配置的大模型驱动
           </p>
@@ -86,7 +86,7 @@
 </template>
 
 <script setup>
-// 智能体对话页（参考豆包 / 千问的布局）：
+// 会话页（参考豆包 / 千问的布局）：
 // - 左侧会话列表，右侧对话区；输入框里带模型选择，选完即可发送
 // - 发送走 SSE 流式接口：先本地插入"用户消息 + 空助手消息"，再按事件增量填充
 // - 会话不在本地新建：点「新建对话」只是清空界面，发出第一条消息时才真正建会话
@@ -101,9 +101,9 @@ import {
   getConversation,
   updateConversation,
   deleteConversation,
-  listAgentModels,
+  listChatModels,
   streamChat
-} from '@/api/agent'
+} from '@/api/chat'
 
 const suggestions = [
   {
@@ -144,7 +144,7 @@ let abortController = null
 const loadModels = async () => {
   modelsLoading.value = true
   try {
-    models.value = (await listAgentModels()) || []
+    models.value = (await listChatModels()) || []
     const bound = activeConversation.value?.model_config_id
     const exists = models.value.some((item) => item.id === bound)
     modelId.value = exists ? bound : (models.value[0]?.id ?? null)

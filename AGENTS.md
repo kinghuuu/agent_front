@@ -15,7 +15,7 @@
 | 路由         | 页面     | 说明                                                              |
 | ------------ | -------- | ----------------------------------------------------------------- |
 | `/dashboard` | 概览     | 展示后端健康状态、PG/Redis 连通性                                 |
-| `/agent`     | 智能体   | 大模型对话页（参考豆包 / 千问）：左侧会话列表 + 右侧对话区，SSE 流式输出、模型切换、重命名 / 删除 / 清空会话 |
+| `/chat`      | 会话     | 大模型对话页（参考豆包 / 千问）：左侧会话列表 + 右侧对话区，SSE 流式输出、模型切换、重命名 / 删除 / 清空会话 |
 | `/models`    | 模型管理 | LLM / Embedding / Rerank 配置列表与增删改查、连通测试、上下文测试 |
 | `/about`     | 关于     | 项目技术栈说明                                                    |
 
@@ -113,3 +113,4 @@ agent_front/src/
 | 2026-11-06 | 修复 | 智能体样式 | `src/views/agent/index.vue` | 经典滚动条只占右侧宽度，导致滚动容器内内容居中轴左移半个滚动条宽（与输入框错位）；`.message-area` 加 `scrollbar-gutter: stable both-edges` 对称预留滚动条槽修复 |
 | 2026-11-06 | 修改 | 布局与样式 | `src/layouts/BasicLayout.vue`, `src/styles/variables.scss` | 侧边栏改浅色主题（`$sidebar-bg` / `$sidebar-hover-bg` 替代深色 `$menu-bg`）：白系底 + 右描边，菜单文字深灰、hover 淡灰、当前项淡底加粗；logo 文字改深色（机器人图标 currentColor 自动适配） |
 | 2026-11-06 | 新增 | 公共图标 | `src/components/icons/AgentIcon.vue`, `src/layouts/BasicLayout.vue` | 新增机器人 SVG 图标组件（描边 currentColor + 渐变点缀，尺寸随 font-size），替换布局 logo 的 MagicStick；公共图标放 `components/icons/` |
+| 2026-11-10 | 重命名 | 会话模块 | `src/views/chat/**`（原 agent）, `src/api/chat.js`, `src/router/index.js` | 页面模块 agent → chat（原「智能体」只是会话功能）：路由 `/agent` → `/chat`（菜单名「会话」）、views 目录与 api 文件更名，接口调用切到 `/api/v1/chat`；`$agent-*` 主题变量保留（全局主题 token，MarkdownContent 等公共组件也在用） |

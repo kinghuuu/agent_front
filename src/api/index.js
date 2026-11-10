@@ -4,4 +4,4 @@
  */
 export * from './system'
 export * from './model'
-export * from './agent'
+export * from './chat'

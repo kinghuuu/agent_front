@@ -38,7 +38,7 @@
           </div>
         </el-header>
 
-        <!-- 内容区：meta.fullscreen 的页面（如智能体对话页）去掉内边距，自行撑满 -->
+        <!-- 内容区：meta.fullscreen 的页面（如会话页）去掉内边距，自行撑满 -->
         <el-main :class="['layout-main', { 'layout-main--full': route.meta.fullscreen }]">
           <router-view v-slot="{ Component }">
             <transition name="fade-slide" mode="out-in">

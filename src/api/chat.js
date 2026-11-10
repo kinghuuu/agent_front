@@ -1,5 +1,5 @@
 /**
- * 智能体模块接口，对应后端 /api/v1/agent。
+ * 会话模块接口，对应后端 /api/v1/chat。
  *
  * 会话的增删改查走统一的 axios 封装（`request.js` 会自动解包 { code, message, data }）；
  * 对话是 SSE 流式响应，axios 无法逐块读取，因此单独用 fetch + ReadableStream 解析。
@@ -7,24 +7,24 @@
 import request from './request'
 
 /** 会话列表（按最近更新倒序） */
-export const listConversations = () => request.get('/v1/agent/conversations')
+export const listConversations = () => request.get('/v1/chat/conversations')
 
 /** 新建会话，data: { title?, model_config_id? } */
 export const createConversation = (data = {}) =>
-  request.post('/v1/agent/conversations', data)
+  request.post('/v1/chat/conversations', data)
 
 /** 会话详情（含全部消息） */
-export const getConversation = (id) => request.get(`/v1/agent/conversations/${id}`)
+export const getConversation = (id) => request.get(`/v1/chat/conversations/${id}`)
 
 /** 重命名会话 / 切换绑定模型，data: { title?, model_config_id? } */
 export const updateConversation = (id, data) =>
-  request.patch(`/v1/agent/conversations/${id}`, data)
+  request.patch(`/v1/chat/conversations/${id}`, data)
 
 /** 删除会话（连带消息） */
-export const deleteConversation = (id) => request.delete(`/v1/agent/conversations/${id}`)
+export const deleteConversation = (id) => request.delete(`/v1/chat/conversations/${id}`)
 
-/** 智能体可用的 LLM 模型（仅启用中的，默认模型在前） */
-export const listAgentModels = () => request.get('/v1/agent/models')
+/** 会话可用的 LLM 模型（仅启用中的，默认模型在前） */
+export const listChatModels = () => request.get('/v1/chat/models')
 
 /** 解析 HTTPException 的错误文案：后端抛 HTTPException 时返回的是 { detail } */
 const readErrorMessage = async (resp) => {
@@ -50,7 +50,7 @@ const readErrorMessage = async (resp) => {
 export async function streamChat(conversationId, payload, handlers, signal) {
   const base = import.meta.env.VITE_API_BASE_URL || '/api'
   const resp = await fetch(
-    `${base}/v1/agent/conversations/${conversationId}/chat/stream`,
+    `${base}/v1/chat/conversations/${conversationId}/chat/stream`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

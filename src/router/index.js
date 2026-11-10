@@ -22,11 +22,11 @@ const routes = [
         meta: { title: '概览', icon: 'Odometer' }
       },
       {
-        path: 'agent',
-        name: 'Agent',
-        component: () => import('@/views/agent/index.vue'),
+        path: 'chat',
+        name: 'Chat',
+        component: () => import('@/views/chat/index.vue'),
         // fullscreen: 页面自己撑满内容区（对话页不需要 el-main 的内边距）
-        meta: { title: '智能体', icon: 'ChatDotRound', fullscreen: true }
+        meta: { title: '会话', icon: 'ChatDotRound', fullscreen: true }
       },
       {
         path: 'models',
