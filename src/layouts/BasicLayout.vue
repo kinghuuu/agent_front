@@ -15,7 +15,7 @@
           router
         >
           <template v-for="item in menuRoutes" :key="item.path">
-            <el-menu-item :index="item.path">
+            <el-menu-item :index="resolveMenuPath(item.path)">
               <el-icon><component :is="item.meta.icon" /></el-icon>
               <template #title>{{ item.meta.title }}</template>
             </el-menu-item>
@@ -78,6 +78,10 @@ const menuRoutes = computed(() => {
 })
 
 const activePath = computed(() => `/${route.path.split('/')[1] || ''}`)
+
+// el-menu 按 index 与 default-active 精确匹配来高亮，
+// 路由表子路由的 path 是相对值（如 'dashboard'），这里统一补成完整路径（如 '/dashboard'）
+const resolveMenuPath = (path) => (path.startsWith('/') ? path : `/${path}`)
 
 onMounted(async () => {
   try {
