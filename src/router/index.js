@@ -35,6 +35,12 @@ const routes = [
         meta: { title: '模型管理', icon: 'Cpu' }
       },
       {
+        path: 'study',
+        name: 'AgentDevelopStudy',
+        component: () => import('@/views/study/index.vue'),
+        meta: { title: '智能体开发学习', icon: 'Notebook' }
+      },
+      {
         path: 'about',
         name: 'About',
         component: () => import('@/views/about/index.vue'),

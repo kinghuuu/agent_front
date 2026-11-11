@@ -17,6 +17,7 @@
 | `/dashboard` | 概览     | 展示后端健康状态、PG/Redis 连通性                                 |
 | `/chat`      | 会话     | 大模型对话页（参考豆包 / 千问）：左侧会话列表 + 右侧对话区，SSE 流式输出、模型切换、重命名 / 删除 / 清空会话 |
 | `/models`    | 模型管理 | LLM / Embedding / Rerank 配置列表与增删改查、连通测试、上下文测试 |
+| `/study`     | 智能体开发学习 | Day 01 实验台：工具清单、Function Calling 循环、手写 ReAct 协议的可视化测试（执行轨迹时间线 / 模型原文展示），可切换模型与最大步数 |
 | `/about`     | 关于     | 项目技术栈说明                                                    |
 
 ## 2. 启动与常用命令
@@ -114,3 +115,4 @@ agent_front/src/
 | 2026-11-06 | 修改 | 布局与样式 | `src/layouts/BasicLayout.vue`, `src/styles/variables.scss` | 侧边栏改浅色主题（`$sidebar-bg` / `$sidebar-hover-bg` 替代深色 `$menu-bg`）：白系底 + 右描边，菜单文字深灰、hover 淡灰、当前项淡底加粗；logo 文字改深色（机器人图标 currentColor 自动适配） |
 | 2026-11-06 | 新增 | 公共图标 | `src/components/icons/AgentIcon.vue`, `src/layouts/BasicLayout.vue` | 新增机器人 SVG 图标组件（描边 currentColor + 渐变点缀，尺寸随 font-size），替换布局 logo 的 MagicStick；公共图标放 `components/icons/` |
 | 2026-11-10 | 重命名 | 会话模块 | `src/views/chat/**`（原 agent）, `src/api/chat.js`, `src/router/index.js` | 页面模块 agent → chat（原「智能体」只是会话功能）：路由 `/agent` → `/chat`（菜单名「会话」）、views 目录与 api 文件更名，接口调用切到 `/api/v1/chat`；`$agent-*` 主题变量保留（全局主题 token，MarkdownContent 等公共组件也在用） |
+| 2026-11-11 | 新增 | 学习实验台 | `src/views/study/**`, `src/api/study.js`, `src/router/index.js` | 「智能体开发学习」页（路由 `/study`）：三个 Tab 对应后端三个接口——工具清单卡片、Function Calling 循环（el-timeline 时间线展示每步工具调用与观察）、手写 ReAct（模型原文 + 解析结果 + Observation）；支持预设问题、最大步数与模型切换；运行类请求单独放宽 axios 超时到 120s；最终回答复用 MarkdownContent |
