@@ -95,12 +95,13 @@ import { onMounted, ref } from 'vue'
 import { listChatModels, runStudyAgent } from '@/api/study'
 import MarkdownContent from '@/components/MarkdownContent.vue'
 
-// 预设问题覆盖了典型场景：两轮依赖（先查天气再决定算不算）、单工具、多工具并行
+// 预设问题覆盖了典型场景：两轮依赖（先查天气再决定算不算）、单工具、多工具并行、新闻检索（练习 1 新增的工具）
 const presets = [
   '北京现在天气怎么样？如果气温低于 20 度，帮我算一下 18*7+46 等于多少。',
   '现在几点了？',
   '北京和上海的天气分别怎么样？',
-  '帮我算一下 sqrt(144) + 18*7+46 的结果'
+  '帮我算一下 sqrt(144) + 18*7+46 的结果',
+  '帮我查一下人工智能最近的新闻，并总结一下'
 ]
 
 const question = ref(presets[0])

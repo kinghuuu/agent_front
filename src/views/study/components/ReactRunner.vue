@@ -80,7 +80,7 @@ import { ref } from 'vue'
 import { runStudyReact } from '@/api/study'
 import MarkdownContent from '@/components/MarkdownContent.vue'
 
-const presets = ['北京天气怎么样？', '现在几点了？帮我算一下 18*7+46', '上海天气怎么样？']
+const presets = ['北京天气怎么样？', '现在几点了？帮我算一下 18*7+46', '上海天气怎么样？', '帮我查一下新能源最近的新闻，并总结一下']
 
 const question = ref(presets[0])
 const maxSteps = ref(6)
