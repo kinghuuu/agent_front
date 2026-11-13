@@ -22,3 +22,11 @@ export const runStudyAgent = (data) =>
 /** 运行手写 ReAct 文本协议循环，data 同上 */
 export const runStudyReact = (data) =>
   request.post('/v1/study/react/run', data, { timeout: 120000 })
+
+/**
+ * Day 02 结构化输出实验：客户意图提取（三级方案）
+ * data: { text, mode: 'naive'|'json_mode'|'json_schema', max_retries?, model_config_id? }
+ * 返回尝试轨迹（原文/报错/降级说明）与最终工单
+ */
+export const runStudyExtract = (data) =>
+  request.post('/v1/study/extract/run', data, { timeout: 120000 })

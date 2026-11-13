@@ -17,7 +17,7 @@
 | `/dashboard` | 概览     | 展示后端健康状态、PG/Redis 连通性                                 |
 | `/chat`      | 会话     | 大模型对话页（参考豆包 / 千问）：左侧会话列表 + 右侧对话区，SSE 流式输出、模型切换、重命名 / 删除 / 清空会话 |
 | `/models`    | 模型管理 | LLM / Embedding / Rerank 配置列表与增删改查、连通测试、上下文测试 |
-| `/study`     | 智能体开发学习 | Day 01 实验台：工具清单、Function Calling 循环、手写 ReAct 协议的可视化测试（执行轨迹时间线 / 模型原文展示），可切换模型与最大步数 |
+| `/study`     | 智能体开发学习 | Day 01–02 实验台：工具清单、Function Calling 循环、手写 ReAct 协议、结构化输出三级方案（尝试轨迹 / 模型原文 / 最终工单），可切换模型与重试次数 |
 | `/about`     | 关于     | 项目技术栈说明                                                    |
 
 ## 2. 启动与常用命令
@@ -119,3 +119,4 @@ agent_front/src/
 | 2026-11-11 | 新增 | 学习实验台 | `src/views/study/**`, `src/api/study.js`, `src/router/index.js` | 「智能体开发学习」页（路由 `/study`）：三个 Tab 对应后端三个接口——工具清单卡片、Function Calling 循环（el-timeline 时间线展示每步工具调用与观察）、手写 ReAct（模型原文 + 解析结果 + Observation）；支持预设问题、最大步数与模型切换；运行类请求单独放宽 axios 超时到 120s；最终回答复用 MarkdownContent |
 | 2026-11-11 | 修改 | 学习实验台 | `src/views/study/components/AgentRunner.vue`, `src/views/study/components/ReactRunner.vue` | 配合后端练习 1（search_news 工具）：两个循环实验区各加一条新闻类预设问题（"帮我查一下某关键词最近的新闻，并总结一下"），页面渲染逻辑不变（工具清单与执行轨迹均动态展示后端返回） |
 | 2026-11-12 | 修改 | ReAct 多轮 | `src/views/study/components/ReactRunner.vue` | 配合后端练习 3（ReAct 多轮对话）：前端持有会话 ID（crypto.randomUUID 生成），每次运行随请求携带，实现"接着上一句继续问"；新增会话状态行（当前轮数 / 会话 ID / "新对话"按钮——换 ID 即清空记忆）；轨迹区末尾新增 history 折叠面板，可视化跨轮累计记忆全文 |
+| 2026-11-13 | 新增 | 学习·结构化输出 | `src/views/study/components/Extractor.vue`, `src/api/study.js`, `src/views/study/index.vue` | 配合后端 Day 02 接口 `/extract/run`：新增"结构化输出"实验区 Tab——三级方案切换（口头要求反面教材 / JSON Mode / Pydantic Schema，切换时展示方案说明）、尝试轨迹时间线（原文 / 报错 / 降级说明 / 通过标签）、最终工单 el-descriptions 展示（含嵌套商品标签）；支持失败重试次数、模型切换与 5 条预设客户原话；页面升级为 Day 01–02 实验台 |
