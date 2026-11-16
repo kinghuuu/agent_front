@@ -24,13 +24,22 @@
 
       <div class="form-row">
         <div class="form-item">
-          <span class="form-label">最大步数</span>
-          <el-input-number v-model="maxSteps" :min="1" :max="12" />
-          <span class="form-hint">防死循环的硬上限，改成 1 可观察"循环被砍掉"的效果</span>
+          <span class="form-label">预算档位</span>
+          <el-select v-model="budgetProfile" style="width: 130px">
+            <el-option label="自动判断" value="auto" />
+            <el-option label="简单（6 步）" value="simple" />
+            <el-option label="复杂（20 步）" value="complex" />
+          </el-select>
+          <span class="form-hint">档位同时限制步数 / token / 时延三道上限</span>
+        </div>
+        <div class="form-item">
+          <span class="form-label">覆盖步数</span>
+          <el-input-number v-model="maxSteps" :min="0" :max="30" />
+          <span class="form-hint">0 = 按档位；设 1 可观察"循环被砍掉"的强制收敛</span>
         </div>
         <div class="form-item">
           <span class="form-label">模型</span>
-          <el-select v-model="modelId" placeholder="默认模型" style="width: 220px" clearable>
+          <el-select v-model="modelId" placeholder="默认模型" style="width: 200px" clearable>
             <el-option
               v-for="m in models"
               :key="m.id"
@@ -49,20 +58,41 @@
 
     <!-- 执行轨迹 -->
     <div v-if="result" class="trace">
+      <!-- Day 05：停止原因与降级交付说明 -->
+      <div class="stop-bar">
+        <el-tag :type="stopTagType" effect="dark" size="small">{{ stopLabel }}</el-tag>
+        <span class="stop-meta">
+          档位 {{ result.budget_profile }}（{{ result.budget_desc }}） ·
+          {{ result.steps.length }} 步 · {{ result.tokens }} tokens · {{ (result.elapsed_ms / 1000).toFixed(1) }}s
+        </span>
+      </div>
+
       <el-alert
-        v-if="result.stopped_by_limit"
+        v-if="result.degraded"
         type="warning"
         :closable="false"
         show-icon
-        title="已达到最大步数，模型始终没有给出最终回答——这正是砍掉循环后 Agent 退化的样子"
+        :title="`已触发强制收敛（${stopLabel}）：用 tools=None 逼模型只用手上信息交卷，下面是降级交付的答案，可能标注了“未能确认”`"
       />
       <el-alert
         v-if="result.escalated"
         type="error"
         :closable="false"
         show-icon
-        title="自愈上限熔断（Day 04）：同一个工具同一类错误连续失败，继续重试只是烧 token，已升级为人工处理"
+        title="自愈上限熔断（Day 04）：同一个工具同一类错误连续失败，继续重试只是烧 token，已改为强制收敛并升级人工"
       />
+      <el-alert
+        v-if="result.grounding_note"
+        :type="result.grounded ? 'info' : 'error'"
+        :closable="false"
+        show-icon
+        :title="result.grounded
+          ? `结果校验（第 4 层）：${result.grounding_note}，重写后已引用工具事实`
+          : `结果校验（第 4 层）：${result.grounding_note}，重写后仍未引用任何工具事实，疑似假收敛`"
+      />
+      <p v-if="result.guard_diagnosis" class="guard-diag">
+        终止诊断：{{ result.guard_diagnosis }}
+      </p>
 
       <h3 class="trace-title">执行轨迹</h3>
       <el-timeline>
@@ -80,6 +110,10 @@
                 并行调用 × {{ step.tool_calls.length }}（模型自主决策，互不依赖）
               </el-tag>
               <el-tag v-else size="small" effect="plain">单工具调用</el-tag>
+              <!-- Day 05：结果指纹只看结果不看动作，连续几步相同 = 无进展 -->
+              <el-tag v-if="step.progress_fp" size="small" effect="plain" class="fp-tag">
+                结果指纹 {{ step.progress_fp }}
+              </el-tag>
             </div>
             <div v-for="(call, i) in step.tool_calls" :key="i" class="call-item">
               <div class="call-name">
@@ -113,30 +147,49 @@
 <script setup>
 // Function Calling Agent 循环实验区：
 // 提问 → 后端跑「决策 → 调工具 → 观察」循环 → 前端把轨迹渲染成时间线
-import { onMounted, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { listChatModels, runStudyAgent } from '@/api/study'
 import MarkdownContent from '@/components/MarkdownContent.vue'
 
-// 预设问题覆盖 Day 03/04 的典型场景：并行多工具、串行依赖、
-// 参数格式错误自愈（Day 04 场景 A）、退款确认门（Day 04 场景 B）
+// 预设问题覆盖 Day 03/04/05 的典型场景：并行多工具、串行依赖、参数自愈、
+// 退款确认门、空结果无进展（变体自旋）、异步导出轮询（白名单+退避）、假收敛
 const presets = [
   '北京现在天气怎么样？如果气温低于 20 度，帮我算一下 18*7+46 等于多少。',
   '杭州今天多少度？需要带伞吗？现在几点了？',
   '北京现在多少度？换算成华氏度是多少？',
   '帮我看下 U000123 最近两单是什么状态',
   '把订单 O20260012 全额退了吧，键盘有质量问题',
-  '现在几点了？',
-  '帮我算一下 sqrt(144) + 18*7+46 的结果',
-  '帮我查一下人工智能最近的新闻，并总结一下'
+  '帮我查一下 U999999 最近有没有订单，有没有发货',
+  '把我的订单导出成 Excel，好了给我下载链接',
+  '我上个月买了什么？',
+  '帮我算一下 sqrt(144) + 18*7+46 的结果'
 ]
 
+// Day 05 停止原因 → 展示文案与标签配色
+const STOP_LABELS = {
+  completed: { label: 'completed · 正常收敛', type: 'success' },
+  repeated_action: { label: 'repeated_action · 同一动作反复', type: 'danger' },
+  no_progress: { label: 'no_progress · 结果无进展', type: 'danger' },
+  max_steps: { label: 'max_steps · 跑满步数', type: 'warning' },
+  budget: { label: 'budget · 资源熔断', type: 'warning' },
+  ungrounded: { label: 'ungrounded · 答案无事实支撑', type: 'danger' }
+}
+
 const question = ref(presets[0])
-const maxSteps = ref(8)
+const budgetProfile = ref('auto')
+const maxSteps = ref(0)
 const modelId = ref(null)
 const userConfirmed = ref(false)
 const models = ref([])
 const loading = ref(false)
 const result = ref(null)
+
+const stopLabel = computed(
+  () => (STOP_LABELS[result.value?.stop_reason] || {}).label || result.value?.stop_reason
+)
+const stopTagType = computed(
+  () => (STOP_LABELS[result.value?.stop_reason] || {}).type || 'info'
+)
 
 onMounted(async () => {
   try {
@@ -153,7 +206,9 @@ const handleRun = async () => {
   try {
     result.value = await runStudyAgent({
       question: question.value.trim(),
-      max_steps: maxSteps.value,
+      budget_profile: budgetProfile.value,
+      // 0 表示不覆盖，由后端按档位决定步数上限
+      max_steps: maxSteps.value || undefined,
       model_config_id: modelId.value || undefined,
       user_confirmed: userConfirmed.value
     })
@@ -214,6 +269,31 @@ const handleRun = async () => {
     margin: $gap-md 0 $gap-sm;
     font-size: 15px;
     color: $text-primary;
+  }
+
+  /* Day 05：停止原因 + 成本一行速览 */
+  .stop-bar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: $gap-sm;
+
+    .stop-meta {
+      font-size: 12px;
+      color: $agent-text-muted;
+    }
+  }
+
+  .guard-diag {
+    margin: 6px 0 0;
+    font-size: 12px;
+    color: $agent-text-muted;
+  }
+
+  .fp-tag {
+    margin-left: 6px;
+    font-family: 'JetBrains Mono', Consolas, Monaco, monospace;
   }
 
   .call-list {
