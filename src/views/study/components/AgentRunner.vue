@@ -39,6 +39,8 @@
             />
           </el-select>
         </div>
+        <!-- Day 04 确认门：资金操作被拦截后，勾选此项重新发送同一问题即可放行 -->
+        <el-checkbox v-model="userConfirmed">已获用户确认（放行退款等资金操作）</el-checkbox>
         <el-button type="primary" :loading="loading" @click="handleRun">
           {{ loading ? '运行中...' : '运行 Agent' }}
         </el-button>
@@ -53,6 +55,13 @@
         :closable="false"
         show-icon
         title="已达到最大步数，模型始终没有给出最终回答——这正是砍掉循环后 Agent 退化的样子"
+      />
+      <el-alert
+        v-if="result.escalated"
+        type="error"
+        :closable="false"
+        show-icon
+        title="自愈上限熔断（Day 04）：同一个工具同一类错误连续失败，继续重试只是烧 token，已升级为人工处理"
       />
 
       <h3 class="trace-title">执行轨迹</h3>
@@ -80,7 +89,7 @@
                   [self-heal] 上一轮报错后的自我纠正
                 </el-tag>
                 <el-tag v-else-if="call.is_error" size="small" type="danger" effect="plain" class="call-tag">
-                  报错（错误已回填给模型）
+                  报错（{{ call.error_type || 'error' }}，错误已回填给模型）
                 </el-tag>
               </div>
               <pre class="call-args">参数：{{ JSON.stringify(call.arguments) }}</pre>
@@ -108,14 +117,15 @@ import { onMounted, ref } from 'vue'
 import { listChatModels, runStudyAgent } from '@/api/study'
 import MarkdownContent from '@/components/MarkdownContent.vue'
 
-// 预设问题覆盖了 Day 03 的典型调度场景：并行多工具（天气+时间互不依赖）、
-// 串行依赖（先查摄氏度再换算华氏度）、两轮依赖（先查天气再决定算不算）、新闻检索
+// 预设问题覆盖 Day 03/04 的典型场景：并行多工具、串行依赖、
+// 参数格式错误自愈（Day 04 场景 A）、退款确认门（Day 04 场景 B）
 const presets = [
   '北京现在天气怎么样？如果气温低于 20 度，帮我算一下 18*7+46 等于多少。',
   '杭州今天多少度？需要带伞吗？现在几点了？',
   '北京现在多少度？换算成华氏度是多少？',
+  '帮我看下 U000123 最近两单是什么状态',
+  '把订单 O20260012 全额退了吧，键盘有质量问题',
   '现在几点了？',
-  '北京和上海的天气分别怎么样？',
   '帮我算一下 sqrt(144) + 18*7+46 的结果',
   '帮我查一下人工智能最近的新闻，并总结一下'
 ]
@@ -123,6 +133,7 @@ const presets = [
 const question = ref(presets[0])
 const maxSteps = ref(8)
 const modelId = ref(null)
+const userConfirmed = ref(false)
 const models = ref([])
 const loading = ref(false)
 const result = ref(null)
@@ -143,7 +154,8 @@ const handleRun = async () => {
     result.value = await runStudyAgent({
       question: question.value.trim(),
       max_steps: maxSteps.value,
-      model_config_id: modelId.value || undefined
+      model_config_id: modelId.value || undefined,
+      user_confirmed: userConfirmed.value
     })
   } finally {
     loading.value = false

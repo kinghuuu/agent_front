@@ -17,7 +17,7 @@
 | `/dashboard` | 概览     | 展示后端健康状态、PG/Redis 连通性                                 |
 | `/chat`      | 会话     | 大模型对话页（参考豆包 / 千问）：左侧会话列表 + 右侧对话区，SSE 流式输出、模型切换、重命名 / 删除 / 清空会话 |
 | `/models`    | 模型管理 | LLM / Embedding / Rerank 配置列表与增删改查、连通测试、上下文测试 |
-| `/study`     | 智能体开发学习 | Day 01–03 实验台：工具清单（含调用日志）、Function Calling 循环（并行多工具 / self-heal 标记 / 耗时展示）、手写 ReAct 协议、结构化输出三级方案（尝试轨迹 / 模型原文 / 最终工单） |
+| `/study`     | 智能体开发学习 | Day 01–04 实验台：工具清单（Schema 自动生成 + 副作用分级 + 说明书预算）、Function Calling 循环（并行多工具 / self-heal / 熔断升级 / 资金操作确认勾选）、手写 ReAct 协议、结构化输出三级方案 |
 | `/about`     | 关于     | 项目技术栈说明                                                    |
 
 ## 2. 启动与常用命令
@@ -121,3 +121,5 @@ agent_front/src/
 | 2026-11-12 | 修改 | ReAct 多轮 | `src/views/study/components/ReactRunner.vue` | 配合后端练习 3（ReAct 多轮对话）：前端持有会话 ID（crypto.randomUUID 生成），每次运行随请求携带，实现"接着上一句继续问"；新增会话状态行（当前轮数 / 会话 ID / "新对话"按钮——换 ID 即清空记忆）；轨迹区末尾新增 history 折叠面板，可视化跨轮累计记忆全文 |
 | 2026-11-13 | 新增 | 学习·结构化输出 | `src/views/study/components/Extractor.vue`, `src/api/study.js`, `src/views/study/index.vue` | 配合后端 Day 02 接口 `/extract/run`：新增"结构化输出"实验区 Tab——三级方案切换（口头要求反面教材 / JSON Mode / Pydantic Schema，切换时展示方案说明）、尝试轨迹时间线（原文 / 报错 / 降级说明 / 通过标签）、最终工单 el-descriptions 展示（含嵌套商品标签）；支持失败重试次数、模型切换与 5 条预设客户原话；页面升级为 Day 01–02 实验台 |
 | 2026-11-13 | 修改 | 学习·多工具调度 | `src/views/study/components/AgentRunner.vue`, `src/views/study/components/ToolList.vue`, `src/api/study.js` | 配合后端 Day 03：Agent 循环轨迹新增并行调用标签（一步多个 tool_calls 时展示"并行调用 × N"）、每次调用的耗时 / 报错 / `[self-heal] 自我纠正` 标记；预设问题补两条 Day 03 场景（"杭州天气+几点了"并行多工具、"摄氏换算华氏"串行依赖）；工具清单页新增"工具调用日志"面板（时间/工具/参数/耗时/结果表格 + 刷新按钮，对接 `GET /tools/calls`）；页面升级为 Day 01–03 实验台 |
+| 2026-11-16 | 修改 | 学习·工具设计 | `src/views/study/components/AgentRunner.vue`, `src/views/study/components/ToolList.vue`, `src/api/study.js` | 配合后端 Day 04：Agent 循环新增"已获用户确认"勾选框（放行退款等资金操作，配合确认门）与熔断升级红色提示（`escalated`）；报错标签细化展示错误类型（bad_json/invalid_args/business_rule/need_confirmation/tool_crash）；预设问题补两条 Day 04 场景（"帮我看下 U000123 最近两单"订单查询、"把订单 O20260012 全额退了吧"确认门流程）；工具卡片新增副作用分级标签（read/write）与"需用户确认"标记；工具清单页顶部新增说明书预算提示条（总字符数 / 预算 / 最长 description，对接 `GET /tools/budget`，超限变警告）；页面升级为 Day 01–04 实验台 |
+| 2026-11-16 | 修改 | 学习·工具清单布局 | `src/views/study/components/ToolList.vue` | 工具卡片固定一行两个（窄屏回落单列）；卡片限高 360px，内容超出时在卡片内部纵向滚动（细滚动条 + `overscroll-behavior: contain` 防滚动穿透），避免长 Schema 把页面拉长 |

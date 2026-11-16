@@ -17,10 +17,14 @@ export const getStudyToolCalls = () => request.get('/v1/study/tools/calls')
 
 /**
  * 运行 Function Calling Agent 循环
- * data: { question, max_steps?, model_config_id? }，返回完整执行轨迹
+ * data: { question, max_steps?, model_config_id?, user_confirmed? }，返回完整执行轨迹
+ * user_confirmed 为 Day 04 确认门：勾选后放行退款等资金操作
  */
 export const runStudyAgent = (data) =>
   request.post('/v1/study/agent/run', data, { timeout: 120000 })
+
+/** Day 04 练习 2：工具说明书预算（总字符数 / 预算上限 / 最长的 3 个 description） */
+export const getStudyToolBudget = () => request.get('/v1/study/tools/budget')
 
 /** 运行手写 ReAct 文本协议循环，data 同上 */
 export const runStudyReact = (data) =>
