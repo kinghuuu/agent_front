@@ -66,9 +66,22 @@
         >
           <!-- 调工具的轮次：展示每次调用的参数与真实执行结果 -->
           <div v-if="step.tool_calls.length" class="call-list">
+            <div class="call-mode">
+              <el-tag v-if="step.tool_calls.length > 1" size="small" type="warning" effect="plain">
+                并行调用 × {{ step.tool_calls.length }}（模型自主决策，互不依赖）
+              </el-tag>
+              <el-tag v-else size="small" effect="plain">单工具调用</el-tag>
+            </div>
             <div v-for="(call, i) in step.tool_calls" :key="i" class="call-item">
               <div class="call-name">
                 调用工具 <code>{{ call.name }}</code>
+                <el-tag size="small" effect="plain" class="call-tag">{{ call.duration_ms }}ms</el-tag>
+                <el-tag v-if="call.self_heal" size="small" type="warning" effect="plain" class="call-tag">
+                  [self-heal] 上一轮报错后的自我纠正
+                </el-tag>
+                <el-tag v-else-if="call.is_error" size="small" type="danger" effect="plain" class="call-tag">
+                  报错（错误已回填给模型）
+                </el-tag>
               </div>
               <pre class="call-args">参数：{{ JSON.stringify(call.arguments) }}</pre>
               <pre class="call-result">结果：{{ call.result }}</pre>
@@ -95,9 +108,12 @@ import { onMounted, ref } from 'vue'
 import { listChatModels, runStudyAgent } from '@/api/study'
 import MarkdownContent from '@/components/MarkdownContent.vue'
 
-// 预设问题覆盖了典型场景：两轮依赖（先查天气再决定算不算）、单工具、多工具并行、新闻检索（练习 1 新增的工具）
+// 预设问题覆盖了 Day 03 的典型调度场景：并行多工具（天气+时间互不依赖）、
+// 串行依赖（先查摄氏度再换算华氏度）、两轮依赖（先查天气再决定算不算）、新闻检索
 const presets = [
   '北京现在天气怎么样？如果气温低于 20 度，帮我算一下 18*7+46 等于多少。',
+  '杭州今天多少度？需要带伞吗？现在几点了？',
+  '北京现在多少度？换算成华氏度是多少？',
   '现在几点了？',
   '北京和上海的天气分别怎么样？',
   '帮我算一下 sqrt(144) + 18*7+46 的结果',
@@ -194,6 +210,10 @@ const handleRun = async () => {
     gap: $gap-sm;
   }
 
+  .call-mode {
+    margin-bottom: 6px;
+  }
+
   .call-item {
     padding: $gap-sm $gap-md;
     border-radius: $radius-md;
@@ -206,6 +226,11 @@ const handleRun = async () => {
 
       code {
         color: $agent-accent;
+      }
+
+      .call-tag {
+        margin-left: 6px;
+        font-weight: 400;
       }
     }
 

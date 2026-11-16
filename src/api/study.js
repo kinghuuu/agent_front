@@ -12,6 +12,9 @@ export { listChatModels } from './chat'
 /** Day 01 工具清单（工具名 / 说明书 / JSON Schema） */
 export const listStudyTools = () => request.get('/v1/study/tools')
 
+/** Day 03 工具调用日志（时间/工具/参数/耗时/是否报错，内存保留最近 200 条） */
+export const getStudyToolCalls = () => request.get('/v1/study/tools/calls')
+
 /**
  * 运行 Function Calling Agent 循环
  * data: { question, max_steps?, model_config_id? }，返回完整执行轨迹

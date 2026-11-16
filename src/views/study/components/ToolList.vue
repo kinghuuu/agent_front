@@ -15,16 +15,66 @@
         <pre class="schema-block">{{ JSON.stringify(tool.parameters, null, 2) }}</pre>
       </el-card>
     </div>
+
+    <!-- Day 03 练习 2：统一分发器的调用日志——观察一轮对话真实执行了几次工具 -->
+    <div class="log-section">
+      <div class="log-head">
+        <h3 class="log-title">
+          工具调用日志
+          <el-tag size="small" effect="plain">Day 03 练习 2</el-tag>
+        </h3>
+        <el-button size="small" :loading="logLoading" @click="loadLog">刷新</el-button>
+      </div>
+      <p class="log-tip">
+        这是 <code>dispatch</code> 分发器记录的每次真实执行（时间 / 工具 / 参数 / 耗时 / 是否报错）。
+        跑一次 Agent 循环后过来刷新，观察"一轮对话到底执行了几次工具"；
+        内存保留最近 200 条，重启后端即清空。
+      </p>
+      <el-table :data="logs" size="small" empty-text="还没有调用记录——去跑一次 Agent 循环吧">
+        <el-table-column prop="time" label="时间" width="90" />
+        <el-table-column prop="name" label="工具" width="130" />
+        <el-table-column label="参数" min-width="200">
+          <template #default="{ row }">
+            <code class="log-args">{{ JSON.stringify(row.arguments) }}</code>
+          </template>
+        </el-table-column>
+        <el-table-column label="耗时" width="80">
+          <template #default="{ row }">{{ row.duration_ms }}ms</template>
+        </el-table-column>
+        <el-table-column label="结果" width="90">
+          <template #default="{ row }">
+            <el-tag size="small" :type="row.is_error ? 'danger' : 'success'">
+              {{ row.is_error ? '报错' : '成功' }}
+            </el-tag>
+          </template>
+        </el-table-column>
+      </el-table>
+    </div>
   </div>
 </template>
 
 <script setup>
-// 工具清单：展示"模型眼里看到的工具长什么样"（名字 + 说明书 + 参数 Schema）
+// 工具清单：展示"模型眼里看到的工具长什么样"（名字 + 说明书 + 参数 Schema），
+// 以及 Day 03 练习 2 的调用日志（dispatch 分发器的真实执行记录）
 import { onMounted, ref } from 'vue'
-import { listStudyTools } from '@/api/study'
+import { getStudyToolCalls, listStudyTools } from '@/api/study'
 
 const loading = ref(true)
 const tools = ref([])
+const logs = ref([])
+const logLoading = ref(false)
+
+// 加载工具调用日志（练习 2），失败不阻塞页面
+const loadLog = async () => {
+  logLoading.value = true
+  try {
+    logs.value = await getStudyToolCalls()
+  } catch {
+    // 静默失败：日志只是观察性数据
+  } finally {
+    logLoading.value = false
+  }
+}
 
 onMounted(async () => {
   try {
@@ -32,6 +82,7 @@ onMounted(async () => {
   } finally {
     loading.value = false
   }
+  loadLog()
 })
 </script>
 
@@ -82,6 +133,40 @@ onMounted(async () => {
     color: $text-primary;
     overflow-x: auto;
     white-space: pre-wrap;
+  }
+}
+
+.log-section {
+  margin-top: $gap-lg;
+
+  .log-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: $gap-sm;
+
+    .log-title {
+      margin: 0;
+      font-size: 15px;
+      color: $text-primary;
+    }
+  }
+
+  .log-tip {
+    margin: 0 0 $gap-sm;
+    font-size: 12px;
+    line-height: 1.8;
+    color: $agent-text-muted;
+
+    code {
+      color: $agent-accent;
+    }
+  }
+
+  .log-args {
+    font-size: 12px;
+    color: $text-regular;
+    word-break: break-all;
   }
 }
 </style>

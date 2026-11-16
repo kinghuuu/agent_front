@@ -3,14 +3,14 @@
     <!-- 页面说明：Agent = LLM + 工具 + 循环 + 状态 -->
     <el-card shadow="never" class="intro-card">
       <div class="intro">
-        <h2 class="intro-title">Agent 开发学习 · Day 01–02 实验台</h2>
+        <h2 class="intro-title">Agent 开发学习 · Day 01–03 实验台</h2>
         <p class="intro-text">
           Agent = <b>LLM</b> + <b>工具</b> + <b>循环</b> + <b>状态</b>。
           下面实验区对应课程的核心对象：模型眼里的<b>工具说明书</b>、 Function
-          Calling 的<b>最小 Agent 循环</b>、拆掉黑盒后的<b
+          Calling 的<b>最小 Agent 循环</b>（Day 03 起支持并行多工具调度与错误自愈
+          self-heal 观测）、拆掉黑盒后的<b
             >手写 ReAct 文本协议</b
-          >， 以及 Day 02 的<b>结构化输出三级方案</b>（消息结构 +
-          让"大脑输出"能被"程序接收"的合同）。
+          >， 以及 Day 02 的<b>结构化输出三级方案</b>。
           每次运行都会展示完整执行轨迹（模型每一轮的决策、工具调用、观察结果或解析报错）。
         </p>
       </div>
