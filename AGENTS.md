@@ -17,7 +17,7 @@
 | `/dashboard` | 概览     | 展示后端健康状态、PG/Redis 连通性                                 |
 | `/chat`      | 会话     | 大模型对话页（参考豆包 / 千问）：左侧会话列表 + 右侧对话区，SSE 流式输出、模型切换、重命名 / 删除 / 清空会话 |
 | `/models`    | 模型管理 | LLM / Embedding / Rerank 配置列表与增删改查、连通测试、上下文测试 |
-| `/study`     | 智能体开发学习 | Day 01–05 实验台：工具清单（Schema 自动生成 + 副作用分级 + 说明书预算）、Function Calling 循环（并行多工具 / self-heal / 四层终止：停止原因、强制收敛降级、结果指纹、事实支撑校验、成本统计）、手写 ReAct 协议、结构化输出三级方案 |
+| `/study`     | 智能体开发学习 | Day 01–06 实验台：工具清单（Schema 自动生成 + 副作用分级 + 说明书预算）、Function Calling 循环（并行多工具 / self-heal / 四层终止：停止原因、强制收敛降级、结果指纹、事实支撑校验、成本统计）、手写 ReAct 协议、结构化输出三级方案、短期记忆（多轮对话 + SessionState 真相源可视化：约束锚点 / 事实槽位 / 滚动摘要 / 水位与淘汰记录） |
 | `/about`     | 关于     | 项目技术栈说明                                                    |
 
 ## 2. 启动与常用命令
@@ -124,3 +124,6 @@ agent_front/src/
 | 2026-11-16 | 修改 | 学习·工具设计 | `src/views/study/components/AgentRunner.vue`, `src/views/study/components/ToolList.vue`, `src/api/study.js` | 配合后端 Day 04：Agent 循环新增"已获用户确认"勾选框（放行退款等资金操作，配合确认门）与熔断升级红色提示（`escalated`）；报错标签细化展示错误类型（bad_json/invalid_args/business_rule/need_confirmation/tool_crash）；预设问题补两条 Day 04 场景（"帮我看下 U000123 最近两单"订单查询、"把订单 O20260012 全额退了吧"确认门流程）；工具卡片新增副作用分级标签（read/write）与"需用户确认"标记；工具清单页顶部新增说明书预算提示条（总字符数 / 预算 / 最长 description，对接 `GET /tools/budget`，超限变警告）；页面升级为 Day 01–04 实验台 |
 | 2026-11-16 | 修改 | 学习·工具清单布局 | `src/views/study/components/ToolList.vue` | 工具卡片固定一行两个（窄屏回落单列）；卡片限高 360px，内容超出时在卡片内部纵向滚动（细滚动条 + `overscroll-behavior: contain` 防滚动穿透），避免长 Schema 把页面拉长 |
 | 2026-11-16 | 修改 | 学习·终止条件 | `src/views/study/components/AgentRunner.vue`, `src/views/study/index.vue` | 配合后端 Day 05：新增预算档位选择（自动 / 简单 6 步 / 复杂 20 步）与覆盖步数（0 = 按档位）；结果区新增停止原因标签（六种 stop_reason 配色）、成本行（档位/步数/tokens/耗时）、强制收敛降级提示、结果校验（第 4 层）提示与终止诊断；每步轨迹展示结果指纹 `progress_fp`（连续相同即无进展）；预设问题补三条 Day 05 场景（空结果自旋、导出轮询、可能假收敛的闲聊事实问题） |
+| 2026-11-17 | 新增 | 学习·短期记忆 | `src/views/study/components/SessionChat.vue`, `src/views/study/index.vue`, `src/api/study.js` | 配合后端 Day 06：新增"短期记忆"Tab——左侧多轮对话（预设追问验证约束锚点与事实槽位、消息气泡带停止原因/水位/成本标签、自动滚底），右侧 SessionState 真相源面板（轮数/上下文/水位/近轮统计、约束锚点永不裁剪、事实槽位 JSON、摘要质检补回硬事实、滚动摘要、淘汰与水位记录）；api 新增 `chatStudySession` / `getStudySession` / `resetStudySession`；页面升级为 Day 01–06 实验台，`npm run build` 通过 |
+| 2026-11-17 | 修改 | 学习·会话输入 | `src/views/study/components/SessionChat.vue` | 发送按钮由输入框外的文字按钮改为内嵌在 textarea 右下角的圆形渐变图标键（Promotion 图标，复用 `$agent-gradient`，与会话页发送键同风格）；用定位容器 + 文本框右侧 44px 留白实现，不依赖 el-input slot；包一层 span 承接 tooltip 的 hover，避免 disabled 时提示失效；placeholder 补 Enter 发送 / Shift+Enter 换行说明 |
+| 2026-11-17 | 修改 | 学习·会话加载态 | `src/views/study/components/SessionChat.vue`, `src/api/study.js`, `src/api/request.js` | 请求进行中在消息列表末尾显示"正在思考…"跳动圆点气泡（发送后/回答后各滚一次底）；内嵌按钮加载中切换为暂停图标（VideoPause）+ 淡紫"停止"样式，点击经 AbortController 真正取消请求，tooltip 同步切换"停止生成/发送"；`chatStudySession` 新增可选 signal 参数，公共响应拦截器对 ERR_CANCELED 静默（停止不留失败气泡、不误弹错误），主动停止与真实失败分流 |

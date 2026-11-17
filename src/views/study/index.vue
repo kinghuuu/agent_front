@@ -3,16 +3,18 @@
     <!-- 页面说明：Agent = LLM + 工具 + 循环 + 状态 -->
     <el-card shadow="never" class="intro-card">
       <div class="intro">
-        <h2 class="intro-title">Agent 开发学习 · Day 01–05 实验台</h2>
+        <h2 class="intro-title">Agent 开发学习 · Day 01–06 实验台</h2>
         <p class="intro-text">
           Agent = <b>LLM</b> + <b>工具</b> + <b>循环</b> + <b>状态</b>。
           下面实验区对应课程的核心对象：模型眼里的<b>工具说明书</b>（Day 04 起由
-          Pydantic 参数模型自动生成，带三层校验与结构化纠错）、 Function
-          Calling 的<b>最小 Agent 循环</b>（并行多工具、self-heal 观测、Day 05
+          Pydantic 参数模型自动生成，带三层校验与结构化纠错）、 Function Calling
+          的<b>最小 Agent 循环</b>（并行多工具、self-heal 观测、Day 05
           起装上<b>四层终止与强制收敛</b>：动作/结果双指纹防自旋、预算熔断、
-          事实支撑校验）、拆掉黑盒后的<b
-            >手写 ReAct 文本协议</b
-          >， 以及 Day 02 的<b>结构化输出三级方案</b>。
+          事实支撑校验）、拆掉黑盒后的<b>手写 ReAct 文本协议</b>、 Day 02
+          的<b>结构化输出三级方案</b>，以及 Day 06 的<b>短期记忆</b>（messages
+          只是每轮现算的视图，<b>SessionState</b> 才是记忆真相源：硬约束进锚点永不裁剪、
+          事实进结构化槽位、旧轮进增量摘要并做实体反向核查、按“轮”裁剪避免孤儿 tool 消息、
+          三档水位线 60% / 80% / 95% 分级处理）。
           每次运行都会展示完整执行轨迹（决策、工具调用、观察结果、停止原因与成本）。
         </p>
       </div>
@@ -32,26 +34,30 @@
         <el-tab-pane label="结构化输出（Day 02）" name="extract">
           <Extractor v-if="activeTab === 'extract'" />
         </el-tab-pane>
+        <el-tab-pane label="短期记忆（Day 06）" name="session">
+          <SessionChat v-if="activeTab === 'session'" />
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
 </template>
 
 <script setup>
-// 智能体开发学习页：可视化测试 Day 01–02 的后端接口（工具清单 / Agent 循环 / ReAct 循环 / 结构化输出）
+// 智能体开发学习页：可视化测试 Day 01–06 的后端接口（工具清单 / Agent 循环 / ReAct / 结构化输出 / 多轮会话）
 // 各实验区拆成独立组件，懒渲染（切到对应 Tab 才挂载，避免互相干扰）
 import { ref } from "vue";
 import ToolList from "./components/ToolList.vue";
 import AgentRunner from "./components/AgentRunner.vue";
 import ReactRunner from "./components/ReactRunner.vue";
 import Extractor from "./components/Extractor.vue";
+import SessionChat from "./components/SessionChat.vue";
 
 const activeTab = ref("agent");
 </script>
 
 <style lang="scss" scoped>
 .page-container {
-  max-width: 90%;
+  max-width: 100%;
   margin: 0 auto;
 }
 

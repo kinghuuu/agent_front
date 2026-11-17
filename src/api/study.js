@@ -26,6 +26,16 @@ export const runStudyAgent = (data) =>
 /** Day 04 练习 2：工具说明书预算（总字符数 / 预算上限 / 最长的 3 个 description） */
 export const getStudyToolBudget = () => request.get('/v1/study/tools/budget')
 
+/** Day 06 多轮会话：同一 session_id 继续追问，返回本轮回答与记忆状态；signal 供"停止生成"主动取消 */
+export const chatStudySession = (data, signal) =>
+  request.post('/v1/study/session/chat', data, { timeout: 120000, signal })
+
+/** Day 06 会话状态快照（约束 / 事实 / 摘要 / 水位 / 淘汰记录） */
+export const getStudySession = (sessionId) => request.get(`/v1/study/session/${sessionId}`)
+
+/** Day 06 重置会话记忆（保留同一个 session_id） */
+export const resetStudySession = (sessionId) => request.delete(`/v1/study/session/${sessionId}`)
+
 /** 运行手写 ReAct 文本协议循环，data 同上 */
 export const runStudyReact = (data) =>
   request.post('/v1/study/react/run', data, { timeout: 120000 })

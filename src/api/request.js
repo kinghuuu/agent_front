@@ -40,6 +40,10 @@ request.interceptors.response.use(
     return res
   },
   (error) => {
+    // 主动取消（如"停止生成"）不弹错误提示，交给调用方自行处理 UI 收尾
+    if (error?.code === 'ERR_CANCELED' || error?.name === 'CanceledError') {
+      return Promise.reject(error)
+    }
     const msg = error.response?.data?.message || error.message || '网络异常'
     ElMessage.error(msg)
     return Promise.reject(error)
