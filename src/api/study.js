@@ -92,3 +92,26 @@ export const chatStudyDay07 = (data) =>
  */
 export const buildStudyContext = (data) =>
   request.post('/v1/study/day08/context', data, { timeout: 60000 })
+
+// ---------- Day 09 LangChain 初探 ----------
+
+/** Day 09 概念数据：手写零件 ↔ 框架零件对照表、消息模式对比、预设问题、langchain-core 版本 */
+export const getDay09Mapping = () => request.get('/v1/study/day09/mapping')
+
+/** Day 09 消息抽象：四类消息对象 + 转回 OpenAI dict（不调模型） */
+export const runDay09Messages = () => request.post('/v1/study/day09/messages')
+
+/** Day 09 Prompt 模板：变量 / partial / 漏填变量 fail-fast（不调模型） */
+export const runDay09Prompt = (data) => request.post('/v1/study/day09/prompt', data)
+
+/** Day 09 结构化输出：with_structured_output 抽三字段回执（可重复跑观察抖动） */
+export const runDay09Structured = (data) =>
+  request.post('/v1/study/day09/structured', data, { timeout: 120000 })
+
+/** Day 09 LCEL 管道：invoke / stream / batch / retry / lambda 五种用法 */
+export const runDay09Lcel = (data) =>
+  request.post('/v1/study/day09/lcel', data, { timeout: 180000 })
+
+/** Day 09 框架版 Agent 循环：@tool + bind_tools + ToolMessage 回填 + MAX_STEPS */
+export const runDay09Agent = (data) =>
+  request.post('/v1/study/day09/agent', data, { timeout: 120000 })
