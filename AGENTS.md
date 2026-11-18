@@ -17,7 +17,7 @@
 | `/dashboard` | 概览     | 展示后端健康状态、PG/Redis 连通性                                 |
 | `/chat`      | 会话     | 大模型对话页（参考豆包 / 千问）：左侧会话列表 + 右侧对话区，SSE 流式输出、模型切换、重命名 / 删除 / 清空会话 |
 | `/models`    | 模型管理 | LLM / Embedding / Rerank 配置列表与增删改查、连通测试、上下文测试 |
-| `/study`     | 智能体开发学习 | Day 01–06 实验台：工具清单（Schema 自动生成 + 副作用分级 + 说明书预算）、Function Calling 循环（并行多工具 / self-heal / 四层终止：停止原因、强制收敛降级、结果指纹、事实支撑校验、成本统计）、手写 ReAct 协议、结构化输出三级方案、短期记忆（多轮对话 + SessionState 真相源可视化：约束锚点 / 事实槽位 / 滚动摘要 / 水位与淘汰记录） |
+| `/study`     | 智能体开发学习 | Day 01–08 实验台：工具清单（Schema 自动生成 + 副作用分级 + 说明书预算）、Function Calling 循环（并行多工具 / self-heal / 四层终止：停止原因、强制收敛降级、结果指纹、事实支撑校验、成本统计）、手写 ReAct 协议、结构化输出三级方案、短期记忆（多轮对话 + SessionState 真相源可视化）、长期记忆与 RAG（画像 KV / 知识库切块索引 / 混合检索 / 三管道组装问答）、上下文工程（四层预算账单 / 检索块去重与摆放轨迹 / 七问自检 / 最终上下文与 dump） |
 | `/about`     | 关于     | 项目技术栈说明                                                    |
 
 ## 2. 启动与常用命令
@@ -128,3 +128,5 @@ agent_front/src/
 | 2026-11-17 | 修改 | 学习·会话输入 | `src/views/study/components/SessionChat.vue` | 发送按钮由输入框外的文字按钮改为内嵌在 textarea 右下角的圆形渐变图标键（Promotion 图标，复用 `$agent-gradient`，与会话页发送键同风格）；用定位容器 + 文本框右侧 44px 留白实现，不依赖 el-input slot；包一层 span 承接 tooltip 的 hover，避免 disabled 时提示失效；placeholder 补 Enter 发送 / Shift+Enter 换行说明 |
 | 2026-11-17 | 修改 | 学习·会话加载态 | `src/views/study/components/SessionChat.vue`, `src/api/study.js`, `src/api/request.js` | 请求进行中在消息列表末尾显示"正在思考…"跳动圆点气泡（发送后/回答后各滚一次底）；内嵌按钮加载中切换为暂停图标（VideoPause）+ 淡紫"停止"样式，点击经 AbortController 真正取消请求，tooltip 同步切换"停止生成/发送"；`chatStudySession` 新增可选 signal 参数，公共响应拦截器对 ERR_CANCELED 静默（停止不留失败气泡、不误弹错误），主动停止与真实失败分流 |
 | 2026-11-17 | 修改 | 模型管理·上下文测试 | `src/views/models/index.vue` | 「上下文测试」按钮仅对 LLM 类型展示（Embedding / Rerank 没有对话上下文概念），避免用户点到必然失败的请求；连通测试按钮保持全类型（后端已按类型分流到 chat / embeddings） |
+| 2026-11-17 | 新增 | 学习·长期记忆与 RAG | `src/views/study/components/Day07Panel.vue`, `src/views/study/index.vue`, `src/api/study.js` | 配合后端 Day 07：新增"长期记忆与 RAG"Tab，内含四个子区——① 长期记忆（写入/覆盖、事实列表、遗忘与清空、注入文本预览、同义键冲突提示）；② 知识库（Markdown 录入 + 切块向量化、文档列表与删除、一键填入示例文档）；③ 检索测试（α 权重滑块、doc_id 元数据过滤、展示 RRF / 向量排名 / BM25 排名）；④ 组装问答（预设问题、最终回答、三管道摘要、检索命中与冲突裁决、工具调用轨迹）；api 新增 9 个 Day07 接口；页面升级为 Day 01–07 实验台，`npm run build` 通过 |
+| 2026-11-18 | 新增 | 学习·上下文工程 | `src/views/study/components/Day08Panel.vue`, `src/views/study/index.vue`, `src/api/study.js` | 配合后端 Day 08：新增"上下文工程"Tab——左列原料区（当前问题 + 预设、真实画像用户 ID、真实混合检索 query 与 top_k、总预算、工具说明书开关、dump 开关，折叠区可编辑手填检索块 / 对话历史 JSON / 系统提示词 / 硬约束），右列结果区（预算总览进度条 + 原料来源标签、四层编排的分层用量条与层文本折叠、检索块"命运"表格：处理方式 / 摆放位次 / 说明、七问自检清单（未通过标红并给出信号）、编排报警、最终上下文与整体 dump，支持一键复制上下文）；`buildStudyContext` 超时放宽到 60s；页面升级为 Day 01–08 实验台，`npm run build` 通过 |
