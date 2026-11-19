@@ -139,3 +139,42 @@ export const runDay10React = (data) =>
 /** Day 10 并行扇出：静态 + Send 动态 + 子图（本地假检索，不花 token） */
 export const runDay10Parallel = (data) =>
   request.post('/v1/study/day10/parallel', data, { timeout: 60000 })
+
+// ---------- Day 11 Checkpointer 与人机协同 ----------
+
+/** Day 11 概念数据：快照四要素 / 两套暂停机制 / 三档存档器 / 六个坑 / 预设问题 / 版本 */
+export const getDay11Mapping = () => request.get('/v1/study/day11/mapping')
+
+/** Day 11 存档三实验：同 thread 续跑 / 跨 thread 隔离 / get_state 快照 */
+export const runDay11Basic = (data) =>
+  request.post('/v1/study/day11/basic', data, { timeout: 180000 })
+
+/** Day 11 交互式续跑：同 thread_id 跨请求读档（MemorySaver，进程重启即丢） */
+export const chatDay11 = (data) =>
+  request.post('/v1/study/day11/chat', data, { timeout: 120000 })
+
+/** Day 11 发起审批：命中敏感工具后 interrupt() 冻结并存档 */
+export const startDay11Approval = (data) =>
+  request.post('/v1/study/day11/approval/start', data, { timeout: 180000 })
+
+/** Day 11 恢复审批：decision = true / false / 改过的参数对象 */
+export const resumeDay11Approval = (data) =>
+  request.post('/v1/study/day11/approval/resume', data, { timeout: 180000 })
+
+/** Day 11 待审批队列（练习 3）：含已等待秒数 */
+export const listDay11Pending = () => request.get('/v1/study/day11/approval/pending')
+
+/** Day 11 审批超时自动驳回（练习 3）：max_age_seconds=0 表示课堂演示"全部视为超时" */
+export const expireDay11Approvals = (data) =>
+  request.post('/v1/study/day11/approval/expire', data, { timeout: 180000 })
+
+/** Day 11 坑 1：interrupt 前有副作用会被重放两次（纯本地，不花 token） */
+export const runDay11Replay = () => request.post('/v1/study/day11/replay', {})
+
+/** Day 11 时间旅行：翻历史 → 改参数 → invoke(None) 重跑 */
+export const runDay11TimeTravel = (data) =>
+  request.post('/v1/study/day11/time-travel', data, { timeout: 180000 })
+
+/** Day 11 SQLite 落盘：mode = first 写入 / resume 换连接续跑 */
+export const runDay11Sqlite = (data) =>
+  request.post('/v1/study/day11/sqlite', data, { timeout: 180000 })
