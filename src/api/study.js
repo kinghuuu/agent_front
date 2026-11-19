@@ -115,3 +115,27 @@ export const runDay09Lcel = (data) =>
 /** Day 09 框架版 Agent 循环：@tool + bind_tools + ToolMessage 回填 + MAX_STEPS */
 export const runDay09Agent = (data) =>
   request.post('/v1/study/day09/agent', data, { timeout: 120000 })
+
+// ---------- Day 10 LangGraph 状态图 ----------
+
+/** Day 10 概念数据：三件套 / reducer / while 对照 / stream_mode / 六个坑 / 预设问题 / langgraph 版本 */
+export const getDay10Mapping = () => request.get('/v1/study/day10/mapping')
+
+/** Day 10 状态与 reducer：四个对照实验（覆盖 / 追加 / 同 id 更新 / 重复追加），不调模型 */
+export const runDay10State = () => request.post('/v1/study/day10/state', {})
+
+/** Day 10 最小线性图：retrieve → generate，返回逐节点 updates / values 事件 */
+export const runDay10MinGraph = (data) =>
+  request.post('/v1/study/day10/min-graph', data, { timeout: 120000 })
+
+/** Day 10 条件边：classify + route + 四条分支（含低置信度转人工） */
+export const runDay10Conditional = (data) =>
+  request.post('/v1/study/day10/conditional', data, { timeout: 180000 })
+
+/** Day 10 完整 ReAct 环：agent ⇄ tools + 双刹车 + 降级交付（可切子图 / 工具失败） */
+export const runDay10React = (data) =>
+  request.post('/v1/study/day10/react', data, { timeout: 180000 })
+
+/** Day 10 并行扇出：静态 + Send 动态 + 子图（本地假检索，不花 token） */
+export const runDay10Parallel = (data) =>
+  request.post('/v1/study/day10/parallel', data, { timeout: 60000 })
