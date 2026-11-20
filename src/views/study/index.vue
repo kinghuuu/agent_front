@@ -3,7 +3,7 @@
     <!-- 页面说明：Agent = LLM + 工具 + 循环 + 状态 -->
     <el-card shadow="never" class="intro-card">
       <div class="intro">
-        <h2 class="intro-title">Agent 开发学习 · Day 01–11 实验台</h2>
+        <h2 class="intro-title">Agent 开发学习 · Day 01–12 实验台</h2>
         <p class="intro-text">
           Agent = <b>LLM</b> + <b>工具</b> + <b>循环</b> + <b>状态</b>。
           下面实验区对应课程的核心对象：模型眼里的<b>工具说明书</b>（Day 04 起由
@@ -32,7 +32,12 @@
           Day 11 给这张图装上<b>存档与暂停键</b>——<b>Checkpointer</b> 一超步存一帧、
           <b>thread_id</b> 决定续跑与隔离、<b>interrupt()</b> 让图停在帧边界等人批（支持改参数放行与
           超时自动驳回），还要提防"恢复时节点重放"这个会重复扣款的坑；
-          最后用<b>时间旅行</b>回到历史帧改参数重跑、用 <b>SQLite</b> 落盘验证"进程死了会话还在"。
+          最后用<b>时间旅行</b>回到历史帧改参数重跑、用 <b>SQLite</b> 落盘验证"进程死了会话还在"；
+          Day 12 把"什么都塞进一个 Agent"这件事拆开——先复现单 Agent 的<b>三堵墙</b>（工具膨胀选错、
+          prompt 臃肿稀释、权限无法分级），再用 <b>Supervisor</b> 让一个只派活的主管指挥若干专家：
+          主管的 <b>Route</b> schema 里没有 content 字段（人格靠 schema 卡出来）、
+          专家<b>私有执行 + 摘要回传</b>（AIMessage 带 name）、<b>Command(goto=, update=)</b> 一次完成跳转与打补丁，
+          加上<b>交接预算</b>兜底、<b>写操作审批闸门</b>与 <b>Send 并行扇出</b>。
           每次运行都会展示完整执行轨迹（决策、工具调用、观察结果、停止原因与成本）。
         </p>
       </div>
@@ -70,13 +75,16 @@
         <el-tab-pane label="Checkpointer（Day 11）" name="day11">
           <Day11Panel v-if="activeTab === 'day11'" />
         </el-tab-pane>
+        <el-tab-pane label="多智能体 Supervisor（Day 12）" name="day12">
+          <Day12Panel v-if="activeTab === 'day12'" />
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
 </template>
 
 <script setup>
-// 智能体开发学习页：可视化测试 Day 01–11 的后端接口（工具清单 / Agent 循环 / ReAct / 结构化输出 / 多轮会话 / 长期记忆与 RAG / 上下文工程 / LangChain / LangGraph / Checkpointer）
+// 智能体开发学习页：可视化测试 Day 01–12 的后端接口（工具清单 / Agent 循环 / ReAct / 结构化输出 / 多轮会话 / 长期记忆与 RAG / 上下文工程 / LangChain / LangGraph / Checkpointer / 多智能体 Supervisor）
 // 各实验区拆成独立组件，懒渲染（切到对应 Tab 才挂载，避免互相干扰）
 import { ref } from "vue";
 import ToolList from "./components/ToolList.vue";
@@ -89,6 +97,7 @@ import Day08Panel from "./components/Day08Panel.vue";
 import Day09Panel from "./components/Day09Panel.vue";
 import Day10Panel from "./components/Day10Panel.vue";
 import Day11Panel from "./components/Day11Panel.vue";
+import Day12Panel from "./components/Day12Panel.vue";
 
 const activeTab = ref("agent");
 </script>

@@ -178,3 +178,28 @@ export const runDay11TimeTravel = (data) =>
 /** Day 11 SQLite 落盘：mode = first 写入 / resume 换连接续跑 */
 export const runDay11Sqlite = (data) =>
   request.post('/v1/study/day11/sqlite', data, { timeout: 180000 })
+
+// ---------- Day 12 多智能体 Supervisor ----------
+
+/** Day 12 概念数据：三堵墙 / 三角色 / 交接方式 / 状态三层 / 三层终止 / 五个坑 / 选型与成本 */
+export const getDay12Mapping = () => request.get('/v1/study/day12/mapping')
+
+/** Day 12 课程 01：单 Agent 复现（toolset = wide 全工具 / narrow 只读工具） */
+export const runDay12Single = (data) =>
+  request.post('/v1/study/day12/single', data, { timeout: 180000 })
+
+/** Day 12 课程 02：最小 Supervisor（dedupe_guard = 练习 1 去重守卫） */
+export const runDay12Team = (data) =>
+  request.post('/v1/study/day12/team', data, { timeout: 240000 })
+
+/** Day 12 课程 03：完整版跑到退款审批处冻结（审批 + 预算 + 存档） */
+export const startDay12Full = (data) =>
+  request.post('/v1/study/day12/full/start', data, { timeout: 240000 })
+
+/** Day 12 恢复审批：decision = true / false / { approved, amount } */
+export const resumeDay12Full = (data) =>
+  request.post('/v1/study/day12/full/resume', data, { timeout: 240000 })
+
+/** Day 12 课程 04 / 练习 3：Send 扇出两条调研分支 → join → writer 只调一次 */
+export const runDay12Parallel = (data) =>
+  request.post('/v1/study/day12/parallel', data, { timeout: 240000 })
