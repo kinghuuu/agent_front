@@ -203,3 +203,56 @@ export const resumeDay12Full = (data) =>
 /** Day 12 课程 04 / 练习 3：Send 扇出两条调研分支 → join → writer 只调一次 */
 export const runDay12Parallel = (data) =>
   request.post('/v1/study/day12/parallel', data, { timeout: 240000 })
+
+// ---------- Day 13 流式输出 ----------
+
+/** Day 13 概念数据：四模式 / API 选型 / interrupt 规则 / SSE 三件套 / 事件协议 / 五个坑 */
+export const getDay13Mapping = () => request.get('/v1/study/day13/mapping')
+
+/** Day 13 课程 01：values / updates / messages 四模式对照（跑 3 趟图，约 6 次 LLM 调用） */
+export const runDay13Modes = (data) =>
+  request.post('/v1/study/day13/modes', data, { timeout: 300000 })
+
+/** Day 13 课程 02：多 Agent token 按 langgraph_node 分流 + 过滤主管 JSON */
+export const runDay13TokenStream = (data) =>
+  request.post('/v1/study/day13/token-stream', data, { timeout: 300000 })
+
+/** Day 13 课程 03：custom 模式——工具内进度上报（检索 + token 交错） */
+export const runDay13CustomStream = (data) =>
+  request.post('/v1/study/day13/custom-stream', data, { timeout: 300000 })
+
+/** Day 13 课程 04：interrupt + 流式同开（不调模型，纯确定性对照实验） */
+export const runDay13InterruptStream = (data) =>
+  request.post('/v1/study/day13/interrupt-stream', data, { timeout: 60000 })
+
+/**
+ * Day 13 课程 05：用浏览器原生 EventSource 消费真 SSE 流。
+ *
+ * 为什么不用 axios：axios 拿到的是完整响应体，无法逐帧回调；EventSource 是 SSE 的标准客户端，
+ * 每收到一个 `data: {...}\n\n` 就触发一次 onmessage。返回实例，页面结束时必须 close()。
+ *
+ * @param {{question: string, model_config_id?: number}} params 查询参数（UTF-8 由 URLSearchParams 编码）
+ * @param {{onNodeStart?: Function, onToken?: Function, onDone?: Function, onError?: Function}} handlers
+ * @returns {EventSource}
+ */
+export function openDay13Sse(params, handlers = {}) {
+  const base = import.meta.env.VITE_API_BASE_URL || '/api'
+  const query = new URLSearchParams({ q: params.question })
+  if (params.model_config_id) query.set('model_config_id', String(params.model_config_id))
+
+  const es = new EventSource(`${base}/v1/study/day13/sse/chat?${query.toString()}`)
+  es.onmessage = (event) => {
+    let data
+    try {
+      data = JSON.parse(event.data)
+    } catch {
+      return
+    }
+    if (data.type === 'token') handlers.onToken?.(data)
+    else if (data.type === 'node_start') handlers.onNodeStart?.(data)
+    else if (data.type === 'done') handlers.onDone?.(data)
+    else if (data.type === 'error') handlers.onError?.(data)
+  }
+  es.onerror = () => handlers.onError?.({ message: 'SSE 连接中断（后端未启动 / 模型报错 / 网络断开）' })
+  return es
+}
