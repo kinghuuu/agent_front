@@ -335,3 +335,35 @@ export const runDay16Regression = (data) =>
 /** Day 16 课程 05：CI 冒烟门禁（分层抽样 + 归档基线 + exit_code） */
 export const runDay16CiGate = (data) =>
   request.post('/v1/study/day16/ci-gate', data, { timeout: 600000 })
+
+
+// ---------- Day 17 成本与延迟优化 ----------
+
+/** Day 17 概念数据：成本结构 / 延迟四段 / 四杠杆 / 缓存三层 / 坑 / 速查表 / 价格与阈值 */
+export const getDay17Mapping = () => request.get('/v1/study/day17/mapping')
+
+/** Day 17 课程 01：成本账本（逐步 token / 放大率 / 重复发送占比；live 时真调一次校准） */
+export const runDay17Ledger = (data) =>
+  request.post('/v1/study/day17/ledger', data, { timeout: 180000 })
+
+/** Day 17 课程 02：模型分级路由（规则 / 小模型分类 / 三信号升级链） */
+export const runDay17Router = (data) =>
+  request.post('/v1/study/day17/router', data, { timeout: 180000 })
+
+/** Day 17 课程 03：上下文压缩（静态瘦身 + 工具结果剪裁 + 预算触发摘要） */
+export const runDay17Compress = (data) =>
+  request.post('/v1/study/day17/compress', data, { timeout: 180000 })
+
+/** Day 17 课程 04：缓存三层（只读白名单 / 实体校验 / 用户隔离 / 前缀哈希） */
+export const runDay17Cache = (data) => request.post('/v1/study/day17/cache', data)
+
+/** Day 17 课程 05：并行工具（串行 vs 并行耗时 + 三道保险 + 时间轴） */
+export const runDay17Parallel = (data) =>
+  request.post('/v1/study/day17/parallel', data, { timeout: 60000 })
+
+/** Day 17 课程 06：带三闸预算熔断的 Agent（simulate 确定 / live 真模型） */
+export const runDay17BudgetAgent = (data) =>
+  request.post('/v1/study/day17/budget-agent', data, { timeout: 180000 })
+
+/** Day 17 课程 06：四个杠杆逐档现算成本与延迟（正确率交给 Day 16 门禁） */
+export const runDay17Ab = (data) => request.post('/v1/study/day17/ab', data)
