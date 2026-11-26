@@ -256,3 +256,27 @@ export function openDay13Sse(params, handlers = {}) {
   es.onerror = () => handlers.onError?.({ message: 'SSE 连接中断（后端未启动 / 模型报错 / 网络断开）' })
   return es
 }
+
+// ---------- Day 14 MCP 协议 ----------
+
+/** Day 14 概念数据：M×N / FC vs MCP / 三角色 / 两传输 / 三原语 / 迁移对照 / 五个坑 */
+export const getDay14Mapping = () => request.get('/v1/study/day14/mapping')
+
+/** Day 14 课程 01/02：spawn 两个 stdio Server，一次拿到协议视角 + LangChain 视角（共 4 个子进程） */
+export const runDay14Discover = (data) =>
+  request.post('/v1/study/day14/discover', data || {}, { timeout: 120000 })
+
+/** Day 14：直接发 tools/call（不经模型），验证 Server 端校验与「错误即结果」 */
+export const callDay14Tool = (data) => request.post('/v1/study/day14/call', data, { timeout: 120000 })
+
+/** Day 14 课程 03：一个 Agent 横跨两个 MCP Server */
+export const runDay14Agent = (data) => request.post('/v1/study/day14/agent', data, { timeout: 300000 })
+
+/** Day 14 课程 05：MCP 工具 + 本地工具混装（余额不足 → 转人工） */
+export const runDay14Mixed = (data) => request.post('/v1/study/day14/mixed', data, { timeout: 300000 })
+
+/** Day 14 课程 04：streamable-http 共享服务（临时 uvicorn，随机端口，用完即关） */
+export const runDay14Http = (data) => request.post('/v1/study/day14/http', data, { timeout: 120000 })
+
+/** Day 14 坑 1 现场：stdout 污染协议通道的三种形态（fd 形态会等到超时） */
+export const runDay14Noisy = (data) => request.post('/v1/study/day14/noisy', data, { timeout: 180000 })
