@@ -308,3 +308,30 @@ export const listDay15Traces = (limit = 5) =>
 
 /** Day 15：把点赞/点踩落到 trace 上（自建版 score） */
 export const submitDay15Feedback = (data) => request.post('/v1/study/day15/feedback', data)
+
+// ---------- Day 16 评估体系 ----------
+
+/** Day 16 概念数据：三个困难 / 三层评估 / 指标体系 / 数据来源 / rubric / 门禁阈值 + 数据集画像 */
+export const getDay16Mapping = () => request.get('/v1/study/day16/mapping')
+
+/** Day 16 课程 01：构建评估集（Day 15 点踩 trace + 人工边界 + 合成变体） */
+export const buildDay16Dataset = (data) => request.post('/v1/study/day16/dataset/build', data)
+
+/** Day 16：读回当前数据集与类别 / 难度 / 来源分布 */
+export const getDay16Dataset = () => request.get('/v1/study/day16/dataset')
+
+/** Day 16 课程 02：跑评估（每 case 多次采样取多数 + 结果与过程指标） */
+export const runDay16Eval = (data) =>
+  request.post('/v1/study/day16/run', data, { timeout: 600000 })
+
+/** Day 16 课程 03：LLM-as-judge（结构化 rubric + pairwise 换序去偏） */
+export const runDay16Judge = (data) =>
+  request.post('/v1/study/day16/judge', data, { timeout: 180000 })
+
+/** Day 16 课程 04：baseline vs candidate 双跑回归 + 门禁 */
+export const runDay16Regression = (data) =>
+  request.post('/v1/study/day16/regression', data, { timeout: 600000 })
+
+/** Day 16 课程 05：CI 冒烟门禁（分层抽样 + 归档基线 + exit_code） */
+export const runDay16CiGate = (data) =>
+  request.post('/v1/study/day16/ci-gate', data, { timeout: 600000 })
