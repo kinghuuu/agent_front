@@ -41,13 +41,16 @@
         <el-tab-pane label="MCP 协议（Day 14）" name="day14">
           <Day14Panel v-if="activeTab === 'day14'" />
         </el-tab-pane>
+        <el-tab-pane label="可观测性（Day 15）" name="day15">
+          <Day15Panel v-if="activeTab === 'day15'" />
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
 </template>
 
 <script setup>
-// 智能体开发学习页：可视化测试 Day 01–14 的后端接口（工具清单 / Agent 循环 / ReAct / 结构化输出 / 多轮会话 / 长期记忆与 RAG / 上下文工程 / LangChain / LangGraph / Checkpointer / 多智能体 Supervisor / 流式输出 / MCP 协议）
+// 智能体开发学习页：可视化测试 Day 01–15 的后端接口（工具清单 / Agent 循环 / ReAct / 结构化输出 / 多轮会话 / 长期记忆与 RAG / 上下文工程 / LangChain / LangGraph / Checkpointer / 多智能体 Supervisor / 流式输出 / MCP 协议 / 可观测性）
 // 各实验区拆成独立组件，懒渲染（切到对应 Tab 才挂载，避免互相干扰）
 import { ref } from "vue";
 import ToolList from "./components/ToolList.vue";
@@ -63,6 +66,7 @@ import Day11Panel from "./components/Day11Panel.vue";
 import Day12Panel from "./components/Day12Panel.vue";
 import Day13Panel from "./components/Day13Panel.vue";
 import Day14Panel from "./components/Day14Panel.vue";
+import Day15Panel from "./components/Day15Panel.vue";
 
 const activeTab = ref("agent");
 </script>

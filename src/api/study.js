@@ -280,3 +280,31 @@ export const runDay14Http = (data) => request.post('/v1/study/day14/http', data,
 
 /** Day 14 坑 1 现场：stdout 污染协议通道的三种形态（fd 形态会等到超时） */
 export const runDay14Noisy = (data) => request.post('/v1/study/day14/noisy', data, { timeout: 180000 })
+
+// ---------- Day 15 可观测性 ----------
+
+/** Day 15 概念数据：失败形态 / 三大件 / 两条路线 / 八字段 / 五个坑 / 平台就绪状态 */
+export const getDay15Mapping = () => request.get('/v1/study/day15/mapping')
+
+/** Day 15 课程 02：自建 CallbackHandler 跑一次 Agent，返回树 + 时间轴 + 原始事件 */
+export const runDay15Callback = (data) =>
+  request.post('/v1/study/day15/callback', data, { timeout: 180000 })
+
+/** Day 15 课程 01/03：平台接入（没配 key 时只返回配置说明，不跑模型） */
+export const runDay15Platform = (data) =>
+  request.post('/v1/study/day15/platform', data, { timeout: 180000 })
+
+/** Day 15 课程 04：自建 span + JSONL，返回本次 trace 的树与指标 + 并发隔离证据 */
+export const runDay15OwnTrace = (data) =>
+  request.post('/v1/study/day15/own-trace', data, { timeout: 180000 })
+
+/** Day 15 课程 05：LangGraph + MCP 全链路（trace_id 跨进程传播） */
+export const runDay15FullStack = (data) =>
+  request.post('/v1/study/day15/full-stack', data, { timeout: 300000 })
+
+/** Day 15：回放最近 N 条自建 trace + 全局指标 + 用户反馈聚合 */
+export const listDay15Traces = (limit = 5) =>
+  request.get('/v1/study/day15/traces', { params: { limit } })
+
+/** Day 15：把点赞/点踩落到 trace 上（自建版 score） */
+export const submitDay15Feedback = (data) => request.post('/v1/study/day15/feedback', data)
