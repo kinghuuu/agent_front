@@ -398,3 +398,76 @@ export const runDay18Pipeline = (data) => request.post('/v1/study/day18/pipeline
 /** Day 18 课程 07：攻击集回归（10 条攻击的期望 vs 实际 + 通过率） */
 export const runDay18AttackSuite = () =>
   request.get('/v1/study/day18/attack-suite', { timeout: 60000 })
+
+// ---------- Day 19 服务化部署 ----------
+
+/** Day 19 概念数据：服务差异 / 四层架构 / 并发模型 / SSE / 三道闸 / 存储 / 坑 / 速查表 */
+export const getDay19Mapping = () => request.get('/v1/study/day19/mapping')
+
+/** Day 19 课程 01：同步阻塞 vs 协程并发（真实计时）+ 容量数学与雪崩推演 */
+export const runDay19Concurrency = (data) =>
+  request.post('/v1/study/day19/concurrency', data, { timeout: 60000 })
+
+/** Day 19 课程 02：SSE 事件计划预览（原始帧 + 心跳 + Last-Event-ID 续发） */
+export const previewDay19Sse = (data) => request.post('/v1/study/day19/sse/preview', data)
+
+/**
+ * Day 19 课程 02：用 EventSource 消费生产级 SSE。
+ *
+ * 与 Day 13 的区别：这里的帧是**命名事件**（`event: token`），所以不能用 onmessage，
+ * 必须为每种事件名单独 addEventListener；心跳是注释行，EventSource 根本不会回调，
+ * 只能靠「连接一直不断」间接体会。
+ *
+ * @param {{question: string, slow_ms?: number, heartbeat_ms?: number, fail?: boolean, last_event_id?: number}} params
+ * @param {{onEvent?: Function, onMeta?: Function, onToken?: Function, onDone?: Function, onError?: Function}} handlers
+ * @returns {EventSource}
+ */
+export function openDay19Sse(params, handlers = {}) {
+  const base = import.meta.env.VITE_API_BASE_URL || '/api'
+  const query = new URLSearchParams()
+  query.set('q', params.question || '订单 A1001 到哪了？')
+  query.set('slow_ms', String(params.slow_ms ?? 1200))
+  query.set('heartbeat_ms', String(params.heartbeat_ms ?? 400))
+  if (params.fail) query.set('fail', 'true')
+  if (typeof params.last_event_id === 'number' && params.last_event_id >= 0) {
+    query.set('last_event_id', String(params.last_event_id))
+  }
+
+  const es = new EventSource(`${base}/v1/study/day19/sse/chat?${query.toString()}`)
+  const bind = (name, handler) => {
+    es.addEventListener(name, (event) => {
+      let data
+      try {
+        data = JSON.parse(event.data)
+      } catch {
+        return
+      }
+      handlers.onEvent?.({ name, id: event.lastEventId, data })
+      handler?.(data)
+    })
+  }
+  bind('meta', handlers.onMeta)
+  bind('node', handlers.onNode)
+  bind('token', handlers.onToken)
+  bind('done', handlers.onDone)
+  bind('error', handlers.onError)
+  // 只在「还没收到 done/error」时把网络断开当错误；正常收尾由页面 close()
+  es.onerror = () => handlers.onNetworkError?.({ message: 'SSE 连接中断（后端未启动 / 网络断开）' })
+  return es
+}
+
+/** Day 19 课程 03：thread_id 拆包 + 归属校验矩阵 + 审批 scope + 恢复载荷 */
+export const runDay19Session = (data) => request.post('/v1/study/day19/session', data)
+
+/** Day 19 课程 04：run 生命周期（背压 503 / 幂等重放 / 软合并 / 越权轮询 / 取消） */
+export const runDay19Runs = (data) =>
+  request.post('/v1/study/day19/runs', data, { timeout: 60000 })
+
+/** Day 19 课程 05：令牌桶突发与回填 + 租户月配额校验/结算 */
+export const runDay19RateLimit = (data) => request.post('/v1/study/day19/rate-limit', data)
+
+/** Day 19 课程 06：prompt 版本化 + hash 稳定灰度 + 门禁 + 30 秒回滚 */
+export const runDay19Rollout = (data) => request.post('/v1/study/day19/rollout', data)
+
+/** Day 19 课程 07：总装骨架（四层组件 / 请求生命周期 / 端点表 / 可抄代码） */
+export const getDay19Skeleton = () => request.get('/v1/study/day19/skeleton')
