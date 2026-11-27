@@ -520,3 +520,35 @@ export const runDay21Graph = (data) => request.post('/v1/study/day21/graph', dat
 
 /** Day 21 课程 07：规划质量四指标 + A/B/C/D 四档对照 + CI 门禁 */
 export const runDay21Eval = (data) => request.post('/v1/study/day21/eval', data)
+
+// ---------- Day 22 代码执行沙箱 ----------
+
+/** Day 22 概念数据：七类威胁 / 五级隔离 / 五道闸 / 容器参数 / 六个坑 / 速查表 */
+export const getDay22Mapping = () => request.get('/v1/study/day22/mapping')
+
+/** Day 22 课程 01：模型心算错 + exec 清空 builtins 仍可逃逸（安全探针） */
+export const runDay22Why = (data) => request.post('/v1/study/day22/why', data)
+
+/** Day 22 课程 02：AST 筛查五个样本 + 四种绕过（lint 不是 jail） */
+export const runDay22Ast = (data) => request.post('/v1/study/day22/ast', data)
+
+/** Day 22 课程 03：L1 子进程 + rlimit + 独立 cwd + 进程组清理 */
+export const runDay22L1 = (data) => request.post('/v1/study/day22/l1', data)
+
+/** Day 22 课程 04：软断网被 _socket 绕过，L1 可读可写宿主机文件 */
+export const runDay22Netfs = (data) => request.post('/v1/study/day22/netfs', data)
+
+/** Day 22 课程 05：L2 容器九个安全参数 + 六条隔离探针 */
+export const runDay22Container = (data) => request.post('/v1/study/day22/container', data)
+
+/** Day 22 课程 06：写代码→执行→看报错→改代码（错误五要素回填） */
+export const runDay22Loop = (data) => request.post('/v1/study/day22/loop', data)
+
+/** Day 22 练习 1：Day 21 的 s3 换真执行器，stdout 字符串解析后过机器判据 */
+export const runDay22Bridge = (data) => request.post('/v1/study/day22/bridge', data)
+
+/** Day 22 课程 07：画像 / AST / 缓存 / 池化 / 审计 / 指标的完整请求路径 */
+export const runDay22Production = (data) => request.post('/v1/study/day22/production', data)
+
+/** Day 22 练习 2/3：十条攻击 × L1/L2 拦截矩阵 + 同类错误升级收益 */
+export const runDay22Pressure = (data) => request.post('/v1/study/day22/pressure', data)
