@@ -50,13 +50,16 @@
         <el-tab-pane label="成本与延迟优化（Day 17）" name="day17">
           <Day17Panel v-if="activeTab === 'day17'" />
         </el-tab-pane>
+        <el-tab-pane label="安全防护（Day 18）" name="day18">
+          <Day18Panel v-if="activeTab === 'day18'" />
+        </el-tab-pane>
       </el-tabs>
     </el-card>
   </div>
 </template>
 
 <script setup>
-// 智能体开发学习页：可视化测试 Day 01–17 的后端接口（工具清单 / Agent 循环 / ReAct / 结构化输出 / 多轮会话 / 长期记忆与 RAG / 上下文工程 / LangChain / LangGraph / Checkpointer / 多智能体 Supervisor / 流式输出 / MCP 协议 / 可观测性 / 评估体系 / 成本与延迟优化）
+// 智能体开发学习页：可视化测试 Day 01–18 的后端接口（工具清单 / Agent 循环 / ReAct / 结构化输出 / 多轮会话 / 长期记忆与 RAG / 上下文工程 / LangChain / LangGraph / Checkpointer / 多智能体 Supervisor / 流式输出 / MCP 协议 / 可观测性 / 评估体系 / 成本与延迟优化 / 安全防护）
 // 各实验区拆成独立组件，懒渲染（切到对应 Tab 才挂载，避免互相干扰）
 import { ref } from "vue";
 import ToolList from "./components/ToolList.vue";
@@ -75,6 +78,7 @@ import Day14Panel from "./components/Day14Panel.vue";
 import Day15Panel from "./components/Day15Panel.vue";
 import Day16Panel from "./components/Day16Panel.vue";
 import Day17Panel from "./components/Day17Panel.vue";
+import Day18Panel from "./components/Day18Panel.vue";
 
 const activeTab = ref("agent");
 </script>

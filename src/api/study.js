@@ -367,3 +367,34 @@ export const runDay17BudgetAgent = (data) =>
 
 /** Day 17 课程 06：四个杠杆逐档现算成本与延迟（正确率交给 Day 16 门禁） */
 export const runDay17Ab = (data) => request.post('/v1/study/day17/ab', data)
+
+/** Day 18 概念数据：五类威胁 / 三条原则 + fail-closed / 攻击面 / 坑 / 速查表 / 沙箱矩阵 */
+export const getDay18Mapping = () => request.get('/v1/study/day18/mapping')
+
+/** Day 18 课程 01：间接注入复现（无害输入 + 有毒工具结果，三个变体对照） */
+export const runDay18Injection = (data) =>
+  request.post('/v1/study/day18/injection', data, { timeout: 60000 })
+
+/** Day 18 课程 02：围栏 + 双向扫描（入站命中 / 出站越界 / 变形样本矩阵） */
+export const runDay18Fence = (data) => request.post('/v1/study/day18/fence', data)
+
+/** Day 18 课程 03：最小权限与 IDOR（身份网关注入 / 越权 NotFound / 好坏签名对照） */
+export const runDay18Authz = (data) => request.post('/v1/study/day18/authz', data)
+
+/** Day 18 课程 04：数据外泄（markdown 图片 / 裸链 / PII / canary） */
+export const runDay18Exfil = (data) => request.post('/v1/study/day18/exfil', data)
+
+/** Day 18 课程 05：危险操作确认门（interrupt 位置 / 幂等账本 / 超时 fail-closed） */
+export const runDay18Approval = (data) =>
+  request.post('/v1/study/day18/approval', data, { timeout: 60000 })
+
+/** Day 18 课程 06：代码执行沙箱（预设攻击样例或自定义代码） */
+export const runDay18Sandbox = (data) =>
+  request.post('/v1/study/day18/sandbox', data, { timeout: 60000 })
+
+/** Day 18 课程 07：安全中间件流水线（单次请求过六道中间件） */
+export const runDay18Pipeline = (data) => request.post('/v1/study/day18/pipeline', data)
+
+/** Day 18 课程 07：攻击集回归（10 条攻击的期望 vs 实际 + 通过率） */
+export const runDay18AttackSuite = () =>
+  request.get('/v1/study/day18/attack-suite', { timeout: 60000 })
