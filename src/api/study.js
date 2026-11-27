@@ -494,3 +494,29 @@ export const runDay20Slo = (data) => request.post('/v1/study/day20/slo', data)
 
 /** Day 20 课程 06：混沌演练（注入 + 预期声明表 + 盲区清单） */
 export const runDay20Chaos = (data) => request.post('/v1/study/day20/chaos', data)
+
+// ---------- Day 21 规划能力 ----------
+
+/** Day 21 概念数据：三症状 / ReAct 对照 / 计划字段 / 三不变量 / 三形态 / 坑 / 速查表 */
+export const getDay21Mapping = () => request.get('/v1/study/day21/mapping')
+
+/** Day 21 课程 01：复现三种「没有计划」的失败（监控全绿但答案错） */
+export const runDay21Failures = (data) => request.post('/v1/study/day21/failures', data)
+
+/** Day 21 课程 02：计划结构 + 三条不变量校验 + DAG 拓扑分层 */
+export const runDay21Schema = (data) => request.post('/v1/study/day21/schema', data)
+
+/** Day 21 课程 03：L1 计划先行（Planner → Executor → Validator） */
+export const runDay21Execute = (data) => request.post('/v1/study/day21/execute', data)
+
+/** Day 21 课程 04：L2 偏离重规划（四动作 / 账本冻结 / 防乒乓） */
+export const runDay21Replan = (data) => request.post('/v1/study/day21/replan', data)
+
+/** Day 21 课程 05：L3 反思回路（根因枚举 / 可执行指令 / 教训升级） */
+export const runDay21Reflexion = (data) => request.post('/v1/study/day21/reflexion', data)
+
+/** Day 21 课程 06：LangGraph 计划图（路由 / 反思 / 重规划 / 中断审批） */
+export const runDay21Graph = (data) => request.post('/v1/study/day21/graph', data)
+
+/** Day 21 课程 07：规划质量四指标 + A/B/C/D 四档对照 + CI 门禁 */
+export const runDay21Eval = (data) => request.post('/v1/study/day21/eval', data)
