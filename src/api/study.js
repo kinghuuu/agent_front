@@ -471,3 +471,26 @@ export const runDay19Rollout = (data) => request.post('/v1/study/day19/rollout',
 
 /** Day 19 课程 07：总装骨架（四层组件 / 请求生命周期 / 端点表 / 可抄代码） */
 export const getDay19Skeleton = () => request.get('/v1/study/day19/skeleton')
+
+// ---------- Day 20 可靠性 ----------
+
+/** Day 20 概念数据：故障四分类 / 重试三要素 / 降级阶梯 / 退出时序 / 容量天花板 / SLO / 坑 / 速查表 */
+export const getDay20Mapping = () => request.get('/v1/study/day20/mapping')
+
+/** Day 20 课程 01：错误分类 + 退避抖动重试 + run 级总预算（等待为模拟，不真睡） */
+export const runDay20Retry = (data) => request.post('/v1/study/day20/retry', data)
+
+/** Day 20 课程 02：降级阶梯 L0→L1→L2→L3（能力对齐 / 缓存铁律 / 探活防乒乓） */
+export const runDay20Ladder = (data) => request.post('/v1/study/day20/ladder', data)
+
+/** Day 20 课程 03：优雅退出时序（摘流量 → 503 → drain → 落盘 → flush） */
+export const runDay20Shutdown = (data) => request.post('/v1/study/day20/shutdown', data)
+
+/** Day 20 课程 04：三道天花板 → Semaphore 定容 + 恒定速率压测读数与决策 */
+export const runDay20Capacity = (data) => request.post('/v1/study/day20/capacity', data)
+
+/** Day 20 课程 05：trace → 窗口指标 → 烧毁率 → 告警判定 + runbook */
+export const runDay20Slo = (data) => request.post('/v1/study/day20/slo', data)
+
+/** Day 20 课程 06：混沌演练（注入 + 预期声明表 + 盲区清单） */
+export const runDay20Chaos = (data) => request.post('/v1/study/day20/chaos', data)
